@@ -3,7 +3,15 @@ package domain.item;
 import domain.DomainHelper;
 import domain.IEntity;
 import domain.MyDate;
-import domain.enums.State;
+import domain.enums.Status;
+import java.util.Calendar;
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 /**
  * Superclass for all item classes
@@ -14,56 +22,71 @@ import domain.enums.State;
  * <li>{@link TvShow}</li>
  * </ul>
  */
+@MappedSuperclass
 public abstract class Item extends IEntity{
     
     //<editor-fold defaultstate="collapsed" desc="variables">
+    
+    @Column(nullable = false)
     private String title;
-    private MyDate releaseDate;
+    @Column(nullable = false, name = "releaseDate")
+    @Temporal(TemporalType.DATE)
+    private Calendar releaseDate;
     private boolean inCollection;
-    private State state;
+    @Enumerated(EnumType.STRING)
+    private Status status;
+    
+    @Transient
+    private MyDate myReleaseDate;
+    
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="constructors">
+    
+    public Item(){}
     public Item(String title, MyDate releaseDate){
         this(title, releaseDate, false, null);
     }
-    public Item(String title, MyDate releaseDate, boolean inCollection, State state){
+    public Item(String title, MyDate releaseDate, boolean inCollection, Status state){
         setTitle(title);
         setReleaseDate(releaseDate);
         setInCollection(inCollection);
-        setState(state);
+        setStatus(state);
     }
+    
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="getters/setters">
     
     public String getTitle() {return title;}
-    public final void setTitle(String title) {
+    public void setTitle(String title) {
         DomainHelper.checkForStringValue("title", title);
         this.title = title;
     }
 
-    public MyDate getReleaseDate() {return releaseDate;}
-    public final void setReleaseDate(MyDate releaseDate) {
-        this.releaseDate = releaseDate;
+    public MyDate getReleaseDate() {return myReleaseDate;}
+    public void setReleaseDate(MyDate releaseDate) {
+        DomainHelper.checkForValue("releaseDate", releaseDate);
+        this.myReleaseDate = releaseDate;
+        this.releaseDate = releaseDate.getDate();
     }
 
     public boolean isInCollection() {return inCollection;}
-    public final void setInCollection(boolean inCollection) {
+    public void setInCollection(boolean inCollection) {
         this.inCollection = inCollection;
     }
 
-    public State getState() {return state;}
-    public final void setState(State state) {
-        if (state==null) state=State.ToDo;
-        DomainHelper.checkForStateValue("state", state, getAvailableStates());
-        this.state = state;
+    public Status getStatus() {return status;}
+    public void setStatus(Status status) {
+        if (status==null) status=Status.ToDo;
+        DomainHelper.checkForStateValue("state", status, getAvailableStates());
+        this.status = status;
     }
     
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="methods">
-    protected abstract State[] getAvailableStates();
+    protected abstract Status[] getAvailableStates();
     //</editor-fold>
 
 }

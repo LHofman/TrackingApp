@@ -1,7 +1,7 @@
 package domain.item;
 
 import domain.*;
-import domain.enums.State;
+import domain.enums.Status;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -26,22 +26,22 @@ public class ItemTest {
      */
     @Test
     public void testConstructor_4args() {
-        instance = new ItemImpl("test", new MyDate(2017, 12, 19), true, State.ToDo);
+        instance = new ItemImpl("test", new MyDate(2017, 12, 19), true, Status.ToDo);
         assertEquals("test", instance.getTitle());
         assertEquals(new MyDate(2017, 12, 19), instance.getReleaseDate());
         assertEquals(true, instance.isInCollection());
-        assertEquals(State.ToDo, instance.getState());
+        assertEquals(Status.ToDo, instance.getStatus());
     }
 
     
     private class ItemImpl extends Item{
         public ItemImpl(String title, MyDate releaseDate){super(title, releaseDate);}
-        public ItemImpl(String title, MyDate releaseDate, boolean inCollection, State state){
+        public ItemImpl(String title, MyDate releaseDate, boolean inCollection, Status state){
             super(title, releaseDate, inCollection, state);
         }
         @Override
-        protected State[] getAvailableStates() {
-            return new State[]{State.ToDo};
+        protected Status[] getAvailableStates() {
+            return new Status[]{Status.ToDo};
         }
     }
 

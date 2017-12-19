@@ -1,11 +1,21 @@
 package domain;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+
 /**
  * The superclass for all entity classes
  */
+@MappedSuperclass
 public abstract class IEntity {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    
+    public IEntity(){}
     
     public void setId(int id){
         DomainHelper.checkMin("id", id, 1);

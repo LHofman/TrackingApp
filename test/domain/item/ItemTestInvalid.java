@@ -2,7 +2,7 @@ package domain.item;
 
 import domain.item.Item;
 import domain.MyDate;
-import domain.enums.State;
+import domain.enums.Status;
 import exceptions.InvalidArgumentException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,20 +21,20 @@ public class ItemTestInvalid {
     private final String title;
     private final MyDate releaseDate;
     private final boolean inCollection;
-    private final State state;
+    private final Status state;
     
     @Parameters
     public static Collection<Object[]> getTestParameters(){
         return Arrays.asList(new Object[][]{
-            {null, new MyDate(1970, 1, 1), true, State.Done},
-            {"", new MyDate(1970, 1, 1), true, State.Done},
-            {"    ", new MyDate(1970, 1, 1), true, State.Done},
+            {null, new MyDate(1970, 1, 1), true, Status.Done},
+            {"", new MyDate(1970, 1, 1), true, Status.Done},
+            {"    ", new MyDate(1970, 1, 1), true, Status.Done},
             {"Silence of the Lambs", new MyDate(1970, 1, 1), true, null},
-            {"Silence of the Lambs", new MyDate(1970, 1, 1), true, State.Doing}
+            {"Silence of the Lambs", new MyDate(1970, 1, 1), true, Status.Doing}
         });
     }
     
-    public ItemTestInvalid(String title, MyDate releaseDate, boolean inCollection, State state){
+    public ItemTestInvalid(String title, MyDate releaseDate, boolean inCollection, Status state){
         this.title = title;
         this.releaseDate = releaseDate;
         this.inCollection = inCollection;
@@ -47,12 +47,12 @@ public class ItemTestInvalid {
     }
     
     private class ItemImpl extends Item{
-        public ItemImpl(String title, MyDate releaseDate, boolean inCollection, State state) {
+        public ItemImpl(String title, MyDate releaseDate, boolean inCollection, Status state) {
             super(title, releaseDate, inCollection, state);
         }
         @Override
-        protected State[] getAvailableStates() {
-            return new State[]{State.ToDo, State.Done};
+        protected Status[] getAvailableStates() {
+            return new Status[]{Status.ToDo, Status.Done};
         }
     }
 }

@@ -1,6 +1,6 @@
 package domain;
 
-import domain.enums.State;
+import domain.enums.Status;
 import exceptions.InvalidArgumentException;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -87,11 +87,11 @@ public abstract class DomainHelper {
      * @param state
      * @param availableStates 
      */
-    public static void checkForStateValue(String argument, State state, State[] availableStates) {
+    public static void checkForStateValue(String argument, Status state, Status[] availableStates) {
         checkForValue(argument, state);
         if (!Arrays.asList(availableStates).contains(state)){
             String expected = "one of the following: ";
-            for (State available: availableStates) expected += available.toString() + ", ";
+            for (Status available: availableStates) expected += available.toString() + ", ";
             throw new InvalidArgumentException(argument, state, 
                 expected.substring(0, expected.length()-2));
         }

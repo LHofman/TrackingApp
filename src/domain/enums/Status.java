@@ -1,5 +1,5 @@
 package domain.enums;
 
-public enum State {
+public enum Status {
     ToDo, Doing, OnHold, OnTrack, Done
 }

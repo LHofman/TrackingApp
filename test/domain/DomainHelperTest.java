@@ -1,6 +1,6 @@
 package domain;
 
-import domain.enums.State;
+import domain.enums.Status;
 import exceptions.InvalidArgumentException;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -205,8 +205,8 @@ public class DomainHelperTest {
      */
     @Test
     public void testCheckForStateValue() {
-        State[] availableStates = {State.ToDo, State.Done};
-        for (State state: availableStates)
+        Status[] availableStates = {Status.ToDo, Status.Done};
+        for (Status state: availableStates)
             DomainHelper.checkForStateValue("test", state, availableStates);
         //test has not thrown an exception
         assertTrue(true);
@@ -216,14 +216,14 @@ public class DomainHelperTest {
      */
     @Test(expected = InvalidArgumentException.class)
     public void testCheckForStateValueNull() {
-        DomainHelper.checkForStateValue("test", null, new State[0]);
+        DomainHelper.checkForStateValue("test", null, new Status[0]);
     }
     /**
      * Test of checkForStateValue method, of class DomainHelper.
      */
     @Test(expected = InvalidArgumentException.class)
     public void testCheckForStateValueUnavailable() {
-        DomainHelper.checkForStateValue("test", State.ToDo, new State[0]);
+        DomainHelper.checkForStateValue("test", Status.ToDo, new Status[0]);
     }
     
     //</editor-fold>
