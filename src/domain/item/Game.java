@@ -1,6 +1,7 @@
 package domain.item;
 
 import domain.MyDate;
+import domain.enums.ItemType;
 import domain.enums.Status;
 import java.io.Serializable;
 import javax.persistence.Entity;
@@ -14,9 +15,16 @@ public class Game extends Item implements Serializable{
         super(title, releaseDate, inCollection, state);
     }
 
-    @Override
-    protected Status[] getAvailableStates() {
+    /**
+     * @return the available statuses for this item
+     */
+    public Status[] getAvailableStatuses() {
         return new Status[]{Status.ToDo, Status.Doing, Status.OnHold, Status.Done};
+    }
+    
+    @Override
+    public ItemType getType() {
+        return ItemType.Game;
     }
     
 }

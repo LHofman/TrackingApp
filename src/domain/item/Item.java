@@ -3,6 +3,7 @@ package domain.item;
 import domain.DomainHelper;
 import domain.IEntity;
 import domain.MyDate;
+import domain.enums.ItemType;
 import domain.enums.Status;
 import java.util.Calendar;
 import javax.persistence.Column;
@@ -29,7 +30,7 @@ public abstract class Item extends IEntity{
     
     @Column(nullable = false)
     private String title;
-    @Column(nullable = false, name = "releaseDate")
+    @Column(nullable = false)
     @Temporal(TemporalType.DATE)
     private Calendar releaseDate;
     private boolean inCollection;
@@ -47,11 +48,8 @@ public abstract class Item extends IEntity{
     public Item(String title, MyDate releaseDate){
         this(title, releaseDate, false, null);
     }
-    public Item(String title, MyDate releaseDate, boolean inCollection, Status state){
-        setTitle(title);
-        setReleaseDate(releaseDate);
-        setInCollection(inCollection);
-        setStatus(state);
+    public Item(String title, MyDate releaseDate, boolean inCollection, Status status){
+        init(title, releaseDate, inCollection, status);
     }
     
     //</editor-fold>
@@ -64,7 +62,15 @@ public abstract class Item extends IEntity{
         this.title = title;
     }
 
-    public MyDate getReleaseDate() {return myReleaseDate;}
+    public MyDate getReleaseDate() {
+        if (myReleaseDate==null) myReleaseDate = new MyDate(releaseDate);
+        return myReleaseDate;
+    }
+    public void setReleaseDate(Calendar releaseDate){
+        DomainHelper.checkForValue("releaseDate", releaseDate);
+        this.releaseDate = releaseDate;
+        this.myReleaseDate = new MyDate(releaseDate);
+    }
     public void setReleaseDate(MyDate releaseDate) {
         DomainHelper.checkForValue("releaseDate", releaseDate);
         this.myReleaseDate = releaseDate;
@@ -79,14 +85,54 @@ public abstract class Item extends IEntity{
     public Status getStatus() {return status;}
     public void setStatus(Status status) {
         if (status==null) status=Status.ToDo;
-        DomainHelper.checkForStateValue("state", status, getAvailableStates());
+        DomainHelper.checkForStateValue("state", status, getAvailableStatuses());
         this.status = status;
     }
     
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="methods">
-    protected abstract Status[] getAvailableStates();
+    
+    /**
+     * Sets all the values
+     * @param title
+     * @param releaseDate
+     * @param inCollection
+     * @param status 
+     */
+    protected void init(String title, MyDate releaseDate, boolean inCollection, Status status){
+        setTitle(title);
+        setReleaseDate(releaseDate);
+        setInCollection(inCollection);
+        setStatus(status);
+    }
+    
+    /**
+     * Changes the values
+     * @param item 
+     */
+    public void editItem(Item item){
+        if (item==null || item.getType()!=getType()) return;
+        init(item.getTitle(), item.getReleaseDate(), item.isInCollection(), item.getStatus());
+    }
+    
+    /**
+     * @return the available statuses for this item
+     */
+    public Status[] getAvailableStatuses(){
+        return new Status[]{Status.ToDo, Status.Done};
+    }
+    
+    /**
+     * @return the name of the subclass
+     */
+    public abstract ItemType getType();
+    
+    @Override
+    public String toString() {
+        return String.format("%s (%s)", title, getReleaseDate().getYear());
+    }
+
     //</editor-fold>
 
 }

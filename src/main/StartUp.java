@@ -1,7 +1,8 @@
 package main;
 
-import domain.DomainController;
+import gui.WelcomePageController;
 import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
@@ -15,7 +16,12 @@ public class StartUp extends Application{
     
     @Override
     public void start(Stage primaryStage) throws Exception {
-        DomainController controller = new DomainController();
+        WelcomePageController welcomePage = new WelcomePageController();
+        Scene mainScene = new Scene(welcomePage);
+        primaryStage.setScene(mainScene);
+        primaryStage.setMinWidth(625.0);
+        primaryStage.setMinHeight(500.0);
+        primaryStage.show();
     }
     
 }

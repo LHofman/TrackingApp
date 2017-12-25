@@ -26,8 +26,6 @@ public class PersistenceAdministrator{
 
     public <E extends IEntity> void persist(E... objects) {
         doTransaction(manager::persist, objects);
-        Arrays.stream(objects).forEach(o -> manager.persist(o));
-        manager.getTransaction().commit();
     }
 
     public <E extends IEntity> void remove(E... objects) {

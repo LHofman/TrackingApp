@@ -43,10 +43,18 @@ public class Repository<E extends IEntity> {
         addItemsToList(items);
     }
     
+    /**
+     * Adds items to the list and observable list
+     * @param items 
+     */
     private void addItemsToList(E... items){
         itemList.addAll(Arrays.asList(items));
         observableItemList.addAll(items);
     }
+    /**
+     * Removes items from the list and observable list
+     * @param items 
+     */
     private void RemoveItemsFromList(E... items){
         itemList.removeAll(Arrays.asList(items));
         observableItemList.removeAll(items);

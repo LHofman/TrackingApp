@@ -1,6 +1,7 @@
 package domain.item;
 
 import domain.MyDate;
+import domain.enums.ItemType;
 import domain.enums.Status;
 import java.io.Serializable;
 import javax.persistence.Entity;
@@ -15,8 +16,8 @@ public class Movie extends Item implements Serializable {
     }
 
     @Override
-    protected Status[] getAvailableStates() {
-        return new Status[]{Status.ToDo, Status.Done};
+    public ItemType getType() {
+        return ItemType.Movie;
     }
     
 }

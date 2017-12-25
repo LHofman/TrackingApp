@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="450.0" minWidth="600.0" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <MenuBar maxHeight="25.0" minHeight="25.0" BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem fx:id="miAbout" mnemonicParsing="false" onAction="#miAboutOnAction" text="About" />
+                  <MenuItem fx:id="miExit" mnemonicParsing="false" onAction="#miExitOnAction" text="Exit" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Items">
+               <items>
+                  <MenuItem fx:id="miHome" mnemonicParsing="false" onAction="#miHomeOnAction" text="Home" />
+               </items></Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <StackPane minHeight="400.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" text="Welcome">
+               <font>
+                  <Font size="50.0" />
+               </font>
+            </Label>
+         </children>
+      </StackPane>
+   </center>
+   <bottom>
+      <Label fx:id="lblError" maxHeight="25.0" minHeight="25.0" BorderPane.alignment="CENTER" />
+   </bottom>
+</fx:root>

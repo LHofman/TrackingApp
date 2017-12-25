@@ -1,12 +1,20 @@
 package domain;
 
+import domain.enums.ItemType;
 import domain.enums.Status;
+import domain.item.Book;
+import domain.item.Movie;
 import exceptions.InvalidArgumentException;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class DomainHelperTest {
 
+    //<editor-fold defaultstate="collapsed" desc="check for valid argument">
+    
     //<editor-fold defaultstate="collapsed" desc="checkForValue">
     
     /**
@@ -224,6 +232,78 @@ public class DomainHelperTest {
     @Test(expected = InvalidArgumentException.class)
     public void testCheckForStateValueUnavailable() {
         DomainHelper.checkForStateValue("test", Status.ToDo, new Status[0]);
+    }
+    
+    //</editor-fold>
+    
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Convert List">
+    
+    /**
+     * Test of {@link domain.DomainHelper#convertList(java.util.List)} method
+     */
+    @Test
+    public void testConvertList() {
+        List<IEntity> originalList = Arrays.asList(new IEntity[]{
+            new Book("title", new MyDate(2017,12, 24), new Person("name", "firstname")),
+            new Book("title2", new MyDate(2017,12, 25), new Person("name2", "firstname2"), true, Status.Done),
+            new Book("title3", new MyDate(2017,12, 26), new Person("name3", "firstname3"))
+        });
+        
+        List<Book> convertedList = DomainHelper.convertList(originalList, Book.class);
+        
+        for (int i=0; i<convertedList.size(); i++)
+            assertTrue(convertedList.get(i).equals(originalList.get(i)));
+    }
+    
+    /**
+     * Test of {@link domain.DomainHelper#convertList(java.util.List)} method
+     * where parameter is null
+     */
+    @Test
+    public void testConvertListNull() {
+        List<Book> convertedList = DomainHelper.convertList(null, Book.class);
+        
+        assertEquals(0, convertedList.size());
+    }
+    
+    /**
+     * Test of {@link domain.DomainHelper#convertList(java.util.List)} method
+     * where the conversion fails
+     */
+    @Test
+    public void testConvertListFail() {
+        List<IEntity> originalList = Arrays.asList(new IEntity[]{
+            new Book("title", new MyDate(2017,12, 24), new Person("name", "firstname")),
+            new Book("title2", new MyDate(2017,12, 25), new Person("name2", "firstname2"), true, Status.Done),
+            new Movie("title3", new MyDate(2017,12, 26))
+        });
+        
+        List<Book> convertedList = DomainHelper.convertList(originalList, Book.class);
+        
+        assertEquals(2, convertedList.size());
+    }
+    
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="getAvailableStatuses">
+    
+    /**
+     * Test of {@link domain.DomainHelper#getAvailableStatuses(domain.enums.ItemType)} method
+     */
+    @Test
+    public void testGetAvailableStatuses(){
+        Assert.assertArrayEquals(new Book().getAvailableStatuses(), DomainHelper.getAvailableStatuses(ItemType.Book));
+    }
+    
+    /**
+     * Test of {@link domain.DomainHelper#getAvailableStatuses(domain.enums.ItemType)} method
+     * with parameters null
+     */
+    @Test
+    public void testGetAvailableStatusesNull(){
+        Assert.assertArrayEquals(null, DomainHelper.getAvailableStatuses(null));
     }
     
     //</editor-fold>

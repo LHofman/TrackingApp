@@ -2,6 +2,7 @@ package domain.item;
 
 import domain.item.Item;
 import domain.MyDate;
+import domain.enums.ItemType;
 import domain.enums.Status;
 import exceptions.InvalidArgumentException;
 import java.util.Arrays;
@@ -29,7 +30,6 @@ public class ItemTestInvalid {
             {null, new MyDate(1970, 1, 1), true, Status.Done},
             {"", new MyDate(1970, 1, 1), true, Status.Done},
             {"    ", new MyDate(1970, 1, 1), true, Status.Done},
-            {"Silence of the Lambs", new MyDate(1970, 1, 1), true, null},
             {"Silence of the Lambs", new MyDate(1970, 1, 1), true, Status.Doing}
         });
     }
@@ -42,7 +42,7 @@ public class ItemTestInvalid {
     }
     
     @Test(expected = InvalidArgumentException.class)
-    public void testItemValid(){
+    public void testItemInvalid(){
         item = new ItemImpl(title, releaseDate, inCollection, state);
     }
     
@@ -51,8 +51,8 @@ public class ItemTestInvalid {
             super(title, releaseDate, inCollection, state);
         }
         @Override
-        protected Status[] getAvailableStates() {
-            return new Status[]{Status.ToDo, Status.Done};
+        public ItemType getType() {
+            return ItemType.Movie;
         }
     }
 }

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root minHeight="400.0" minWidth="600.0" type="GridPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="450.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="150.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints minHeight="350.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="100.0" minHeight="50.0" vgrow="SOMETIMES" />
+   </rowConstraints>
+   <children>
+      <ScrollPane fitToHeight="true" fitToWidth="true" minHeight="350.0" minWidth="450.0" HBox.hgrow="ALWAYS">
+         <HBox.margin>
+            <Insets />
+         </HBox.margin>
+         <content>
+            <TableView fx:id="tblItems">
+               <columns>
+                  <TableColumn fx:id="tbcTitle" editable="false" minWidth="150.0" text="Title" />
+                  <TableColumn fx:id="tbcReleaseDate" editable="false" minWidth="100.0" text="ReleaseDate" />
+                  <TableColumn fx:id="tbcInCollection" minWidth="100.0" text="InCollection" />
+                  <TableColumn fx:id="tbcStatus" minWidth="100.0" text="Status" />
+               </columns></TableView>
+         </content>
+      </ScrollPane>
+      <VBox alignment="CENTER" maxWidth="300.0" minWidth="150.0" GridPane.columnIndex="1" HBox.hgrow="ALWAYS">
+         <children>
+            <Region VBox.vgrow="ALWAYS" />
+            <Button fx:id="btnNew" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" minWidth="150.0" mnemonicParsing="false" onAction="#createNew" text="Create New">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Region VBox.vgrow="ALWAYS" />
+            <Button fx:id="btnDetails" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" minWidth="150.0" mnemonicParsing="false" onAction="#showDetails" text="Show Details" GridPane.columnIndex="1">
+               <font>
+                  <Font size="20.0" />
+               </font>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Button>
+            <Region VBox.vgrow="ALWAYS" />
+            <Button fx:id="btnDelete" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" minWidth="150.0" mnemonicParsing="false" onAction="#deleteItem" text="Delete Item" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Region VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+      <HBox alignment="CENTER" GridPane.rowIndex="1">
+         <children>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnFilter" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" minHeight="50.0" mnemonicParsing="false" onAction="#filterResults" text="Filter results">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnClearFilters" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" minHeight="50.0" mnemonicParsing="false" onAction="#clearFilters" text="Clear filters">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Region HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+   </children>
+</fx:root>

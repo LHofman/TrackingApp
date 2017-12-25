@@ -25,7 +25,7 @@ public class Person extends IEntity implements Serializable{
     
     @OneToMany(mappedBy = "author")
     private List<Book> books;
-            
+
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="constructors">
@@ -33,8 +33,7 @@ public class Person extends IEntity implements Serializable{
     public Person(){books = new ArrayList<>();}
     public Person(String name, String firstName){
         this();
-        setName(name);
-        setFirstName(firstName);
+        init(name, firstName);
     }
     
     //</editor-fold>
@@ -56,12 +55,31 @@ public class Person extends IEntity implements Serializable{
     public List<Book> getBooks() {return books;}
     public void setBooks(List<Book> books) {
         if (books==null) this.books = new ArrayList<>();
-        this.books = books;
+        else this.books = books;
     }
     
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="methods">
+    
+    /**
+     * sets all the values
+     * @param name
+     * @param firstName 
+     */
+    private void init(String name, String firstName){
+        setName(name);
+        setFirstName(firstName);
+    }
+    
+    /**
+     * Changes the values
+     * @param person 
+     */
+    public void editPerson(Person person){
+        if (person==null) return;
+        init(person.getName(), person.getFirstName());
+    }
     
     public void addBooks(Book... books){
         if (books==null) return;
@@ -72,6 +90,11 @@ public class Person extends IEntity implements Serializable{
         this.books.removeAll(Arrays.asList(books));
     }
     
+    @Override
+    public String toString() {
+        return firstName.concat(" ").concat(name);
+    }
+
     //</editor-fold>
 
 }
