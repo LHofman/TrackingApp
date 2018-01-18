@@ -9,6 +9,7 @@ import domain.item.Book;
 import domain.item.Game;
 import domain.item.Item;
 import domain.item.ItemFactory;
+import domain.item.TvShow;
 import java.sql.Date;
 import java.util.Calendar;
 import javafx.beans.value.ObservableValue;
@@ -20,12 +21,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class ItemDetailsPageController extends EntityDetailsPageController {
+public class ItemDetailsPageController extends EntityDetailsPageController<Item> {
 
     //<editor-fold defaultstate="collapsed" desc="constructors">
     
@@ -67,8 +69,23 @@ public class ItemDetailsPageController extends EntityDetailsPageController {
             //set author (in)visible
             grid.setVisible(newValue == ItemType.Book, "lblAuthor", "cmbAuthor", "btnNewAuthor");
             //set objectives (in)visible
-            grid.setVisible(newValue == ItemType.Game, "lblObjectives", "btnObjectives");
-
+            boolean visible = false;
+            String lblChildren = "Children", btnChildren = "Children";
+            if (newValue==ItemType.Game){
+                visible = true;
+                lblChildren = "Objectives: ";
+                btnChildren = "See Objectives";
+            }else if (newValue==ItemType.TvShow){
+                visible = true;
+                lblChildren = "Seasons: ";
+                btnChildren = "See Seasons";
+            }
+            if (visible){
+                grid.setVisible(true, "lblObjectives", "btnObjectives");
+                ((Label)grid.getNode("lblChildren")).setText(lblChildren);
+                ((Button)grid.getNode("btnChildren")).setText(btnChildren);
+            }
+            
         });
         grid.addRow("empty", "cbType");
         return cbType;
@@ -162,19 +179,28 @@ public class ItemDetailsPageController extends EntityDetailsPageController {
      * Adds all controls below the defaults
      */
     private void addAfterDefaults() {
-        grid.addNode("lblObjectives", "Label", "Objectives: ");
-        grid.addNode("btnObjectives", "Button", "See Objectives");
-        ((Button) grid.getNode("btnObjectives")).setOnAction(event -> {
+        grid.addNode("lblChildren", "Label", "Children: ");
+        grid.addNode("btnChildren", "Button", "See Children");
+        ((Button) grid.getNode("btnChildren")).setOnAction(event -> {
 
             if (!saveEntity()){
                 controller.throwException("Please first fill in the title and date first");
                 return;
             }
 
-            Game game = (Game) controller.getEntityFromId(Game.class, ((Item)entity).getId());
-            controller.addToScenePath(new GameObjectivesPageController(game));
+            switch(entity.getType()){
+                case Game: 
+                    Game game = (Game) controller.getEntityFromId(Game.class, entity.getId());
+                    controller.addToScenePath(new GameObjectivesPageController(game));
+                    break;
+                case TvShow:
+                    TvShow tvShow = (TvShow) controller.getEntityFromId(TvShow.class, entity.getId());
+                    controller.addToScenePath(new TvShowSeasonsPageController(tvShow));
+                    break;
+            }
+            
         });
-        grid.addRow("lblObjectives", "btnObjectives");
+        grid.addRow("lblChildren", "btnChildren");
     }
 
     //</editor-fold>

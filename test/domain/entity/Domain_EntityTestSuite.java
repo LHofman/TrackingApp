@@ -9,6 +9,6 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    IEntityTest.class, PersonTest.class, PersonTestInvalid.class, GameObjectiveTest.class
+    IEntityTest.class, PersonTest.class, PersonTestInvalid.class, GameObjectiveTest.class, EpisodeTest.class
 })
 public class Domain_EntityTestSuite {}

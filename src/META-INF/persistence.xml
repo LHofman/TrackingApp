@@ -8,6 +8,7 @@
     <class>domain.item.TvShow</class>
     <class>domain.entity.Person</class>
     <class>domain.entity.GameObjective</class>
+    <class>domain.entity.Episode</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/trackingdb?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

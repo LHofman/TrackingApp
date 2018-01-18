@@ -1,7 +1,6 @@
 package domain.entity;
 
 import domain.MyDate;
-import domain.entity.GameObjective;
 import domain.enums.Status;
 import domain.item.Game;
 import exceptions.InvalidArgumentException;
@@ -232,4 +231,11 @@ public class GameObjectiveTest {
         assertTrue(instance.hasObjectives());
     }
 
+    /**
+     * Tests the {@link GameObjective#toString()} method
+     */
+    @Test
+    public void testToString(){
+        assertEquals("Get all 120 Stars", instance.toString());
+    }
 }

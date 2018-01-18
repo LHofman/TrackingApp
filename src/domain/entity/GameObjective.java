@@ -21,7 +21,7 @@ import javax.persistence.OneToMany;
  * An object of {@link domain.item.Game}
  */
 @Entity
-public class GameObjective extends IEntity implements Serializable, IHasIndex {
+public class GameObjective extends IEntity implements Serializable{
 
     @Column(name = "objectiveIndex")
     private int index;
@@ -32,6 +32,7 @@ public class GameObjective extends IEntity implements Serializable, IHasIndex {
     @MapKeyColumn(name = "LINK_NAME")
     @Column(name = "LINK")
     private Map<String, String> links;
+    
     @JoinColumn(nullable = false)
     @ManyToOne
     private Game game;
@@ -61,12 +62,10 @@ public class GameObjective extends IEntity implements Serializable, IHasIndex {
     
     //<editor-fold defaultstate="collapsed" desc="getters/setters">
     
-    @Override
     public int getIndex() {
         return index;
     }
 
-    @Override
     public void setIndex(int index) {
         this.index = index;
     }

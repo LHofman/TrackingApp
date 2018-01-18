@@ -34,7 +34,7 @@ public final class DomainController extends Observable{
         PersistenceController.start();
         PersistenceAdministrator pa = PersistenceController.getPersistenceAdministrator();
         Arrays.stream(new Class[]{Book.class, Game.class, Movie.class, TvShow.class}).forEach(c -> repos.put(c, new ItemRepository(c, pa)));
-        Arrays.stream(new Class[]{GameObjective.class, Person.class}).forEach(c -> repos.put(c, new Repository(c, pa)));
+        Arrays.stream(new Class[]{Episode.class, GameObjective.class, Person.class}).forEach(c -> repos.put(c, new Repository(c, pa)));
         
         pathToScene = new Stack<>();
         pathToPredicates = new Stack<>();
