@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" type="FlowPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label fx:id="lblTitle" alignment="CENTER" prefHeight="100.0" prefWidth="1200.0" text="Title">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Label>
+      <Region prefHeight="500.0" prefWidth="5.0" />
+      <TableView fx:id="tblObjects" prefHeight="500.0" prefWidth="545.0" />
+      <VBox fx:id="vboxIndexButtons" alignment="CENTER" prefHeight="500.0" prefWidth="100.0" spacing="20.0">
+         <children>
+            <Button fx:id="btnFirst" defaultButton="true" mnemonicParsing="false" onAction="#moveFirst" text="First">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnUp" defaultButton="true" mnemonicParsing="false" onAction="#moveUp" text="^">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnDown" defaultButton="true" mnemonicParsing="false" onAction="#moveDown" text="v">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnLast" defaultButton="true" mnemonicParsing="false" onAction="#moveLast" text="Last">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+         </children>
+      </VBox>
+      <GridPane fx:id="gridNewObject" alignment="CENTER" hgap="20.0" prefHeight="500.0" prefWidth="550.0" vgap="20.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+      </GridPane>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="600.0" spacing="20.0">
+         <children>
+            <Button fx:id="btnDetails" defaultButton="true" mnemonicParsing="false" onAction="#showDetails" text="Details">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnDelete" defaultButton="true" mnemonicParsing="false" onAction="#delete" text="Delete">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnCancel" defaultButton="true" mnemonicParsing="false" onAction="#cancel" text="Cancel">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+         </children>
+      </HBox>
+   </children>
+</fx:root>

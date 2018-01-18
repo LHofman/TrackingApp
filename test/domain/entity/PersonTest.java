@@ -1,5 +1,7 @@
-package domain;
+package domain.entity;
 
+import domain.MyDate;
+import domain.entity.Person;
 import domain.item.Book;
 import java.util.ArrayList;
 import java.util.Arrays;

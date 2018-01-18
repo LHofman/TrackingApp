@@ -117,8 +117,10 @@ public class ItemListPageController extends GridPane{
     private void filterResults(ActionEvent event) {
         if (filterStage==null){
             filterStage = new Stage(StageStyle.DECORATED);
+            filterStage.setTitle("Filter Items");
             filterStage.setMinWidth(625);
             filterStage.setMinHeight(650);
+            filterStage.setResizable(false);
             filterWindow = new FilterWindowController(items);
             Scene scene = new Scene(filterWindow);
             filterStage.setScene(scene);

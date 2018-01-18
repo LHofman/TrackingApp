@@ -1,6 +1,6 @@
 package persistence.repositories;
 
-import domain.IEntity;
+import domain.entity.IEntity;
 import java.util.Arrays;
 import java.util.List;
 import javafx.collections.FXCollections;
@@ -16,15 +16,21 @@ public class Repository<E extends IEntity> {
     protected PersistenceAdministrator pa;
     protected List<E> itemList;
     protected ObservableList<E> observableItemList;
+    protected Class iClass;
     
     public Repository(Class iClass, PersistenceAdministrator pa){
         this.pa = pa;
+        this.iClass = iClass;
         itemList = (List<E>) pa.getAll(iClass);
         observableItemList = FXCollections.observableArrayList(itemList);
     }
     
     public ObservableList<E> getAll(){
         return observableItemList;
+    }
+
+    public E getFromId(int id) {
+        return (E)pa.getFromId(iClass, id);
     }
 
     public void add(E... items) {
@@ -59,6 +65,5 @@ public class Repository<E extends IEntity> {
         itemList.removeAll(Arrays.asList(items));
         observableItemList.removeAll(items);
     }
-
     
 }

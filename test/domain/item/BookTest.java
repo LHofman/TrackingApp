@@ -1,7 +1,7 @@
 package domain.item;
 
 import domain.MyDate;
-import domain.Person;
+import domain.entity.Person;
 import domain.enums.Status;
 import exceptions.InvalidArgumentException;
 import org.junit.Before;

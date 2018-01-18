@@ -1,12 +1,12 @@
 package gui;
 
-import domain.DomainController;
 import domain.DomainHelper;
 import domain.MyDate;
-import domain.Person;
+import domain.entity.Person;
 import domain.enums.ItemType;
 import domain.enums.Status;
 import domain.item.Book;
+import domain.item.Game;
 import domain.item.Item;
 import domain.item.ItemFactory;
 import java.sql.Date;
@@ -14,64 +14,48 @@ import java.util.Calendar;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class ItemDetailsPageController extends GridPane {
-
-    //<editor-fold defaultstate="collapsed" desc="variables">
-    private DomainController controller;
-    private Item item;
-    private CustomGridPane grid;
-    //</editor-fold>
+public class ItemDetailsPageController extends EntityDetailsPageController {
 
     //<editor-fold defaultstate="collapsed" desc="constructors">
-    public ItemDetailsPageController() {
-        this.controller = DomainController.getInstance();
-
-        grid = new CustomGridPane(this);
-        setUpChildren();
-    }
-
-    public ItemDetailsPageController(Item item) {
-        this();
-        this.item = item;
-        fillNodes();
-    }
+    
+    public ItemDetailsPageController() {super(Item.class);}
+    public ItemDetailsPageController(Item item) {super(item);}
 
     //</editor-fold>
+    
     //<editor-fold defaultstate="collapsed" desc="GridPane">
     //<editor-fold defaultstate="collapsed" desc="setUp">
+    
     /**
      * Fills the grid
      */
-    private void setUpChildren() {
+    @Override
+    protected void setUpForm() {
         //create children
         ChoiceBox cbType = addType();
         addBeforeDefaults();
         addDefaultChildren();
-        grid.addButtons(e -> save(), e -> closeStage());
+        addAfterDefaults();
         //set type when everything exists
         cbType.getSelectionModel().select(0);
-        //constraints
-        grid.setUpConstraints(600, 400, 3);
     }
 
     /**
      * @return A ComboBox for the {@link domain.enums.ItemType}
      */
     private ChoiceBox addType() {
-        addNode("cbType", "ChoiceBox", (Object[]) ItemType.values());
+        grid.addNode("cbType", "ChoiceBox", (Object[]) ItemType.values());
         ChoiceBox cbType = (ChoiceBox) grid.getNode("cbType");
         cbType.getSelectionModel().selectedItemProperty().addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
             ItemType value = (ItemType) newValue;
@@ -82,6 +66,8 @@ public class ItemDetailsPageController extends GridPane {
             cbStatus.getSelectionModel().select(0);
             //set author (in)visible
             grid.setVisible(newValue == ItemType.Book, "lblAuthor", "cmbAuthor", "btnNewAuthor");
+            //set objectives (in)visible
+            grid.setVisible(newValue == ItemType.Game, "lblObjectives", "btnObjectives");
 
         });
         grid.addRow("empty", "cbType");
@@ -92,13 +78,14 @@ public class ItemDetailsPageController extends GridPane {
      * Adds all controls above the defaults
      */
     private void addBeforeDefaults() {
-        addNode("lblAuthor", "Label", "Author: ");
-        addNode("cmbAuthor", "ComboBox", (Object[]) controller.getAll(Person.class).toArray());
-        new AutoCompleteComboBoxListener<Person>((ComboBox) getNode("cmbAuthor"));
-        addNode("btnNewAuthor", "Button", "New Author");
+        grid.addNode("lblAuthor", "Label", "Author: ");
+        grid.addNode("cmbAuthor", "ComboBox", (Object[]) controller.getAll(Person.class).toArray());
+        new AutoCompleteComboBoxListener<Person>((ComboBox) grid.getNode("cmbAuthor"));
+        grid.addNode("btnNewAuthor", "Button", "New Author");
         //<editor-fold defaultstate="collapsed" desc="new author pane">
-        ((Button) getNode("btnNewAuthor")).setOnAction(event -> {
+        ((Button) grid.getNode("btnNewAuthor")).setOnAction(event -> {
             Stage newAuthorStage = new Stage(StageStyle.DECORATED);
+            newAuthorStage.setTitle("New Author");
             int width = 600;
             int height = 300;
             newAuthorStage.setWidth(width);
@@ -118,7 +105,7 @@ public class ItemDetailsPageController extends GridPane {
                     String firstName = ((TextField) newAuthorGrid.getNode("txtFirstName")).getText();
                     Person newPerson = new Person(name, firstName);
                     controller.addEntity(newPerson);
-                    ((ComboBox) getNode("cmbAuthor")).getItems().add(newPerson);
+                    ((ComboBox) grid.getNode("cmbAuthor")).getItems().add(newPerson);
                     newAuthorStage.close();
                 } catch (Exception e) {
                     controller.throwException(e);
@@ -126,7 +113,7 @@ public class ItemDetailsPageController extends GridPane {
             }, cancelEvent -> {
                 newAuthorStage.close();
             });
-            newAuthorGrid.setUpConstraints(width, height - 50, 2);
+            newAuthorGrid.setUpConstraints();
 
             Scene scene = new Scene(newAuthorPane);
             newAuthorStage.setScene(scene);
@@ -141,19 +128,19 @@ public class ItemDetailsPageController extends GridPane {
      */
     private void addDefaultChildren() {
         //title
-        addNode("lblTitle", "Label", "Title: ");
-        addNode("txtTitle", "TextField");
+        grid.addNode("lblTitle", "Label", "Title: ");
+        grid.addNode("txtTitle", "TextField");
         grid.addRow("lblTitle", "txtTitle");
         //releasedate
-        addNode("lblReleaseDate", "Label", "ReleaseDate: ");
-        addNode("dpReleaseDate", "DatePicker");
+        grid.addNode("lblReleaseDate", "Label", "ReleaseDate: ");
+        grid.addNode("dpReleaseDate", "DatePicker");
         grid.addRow("lblReleaseDate", "dpReleaseDate");
-        DatePicker releaseDate = (DatePicker) getNode("dpReleaseDate");
+        DatePicker releaseDate = (DatePicker) grid.getNode("dpReleaseDate");
         releaseDate.setOnAction((ActionEvent event) -> {
             Date release = Date.valueOf(releaseDate.getValue());
             boolean after = release.after(Calendar.getInstance().getTime());
-            CheckBox inPossession = (CheckBox) getNode("chbInPossession");
-            ChoiceBox state = (ChoiceBox) getNode("cbStatus");
+            CheckBox inPossession = (CheckBox) grid.getNode("chbInPossession");
+            ChoiceBox state = (ChoiceBox) grid.getNode("cbStatus");
             if (after) {
                 inPossession.setSelected(false);
                 state.getSelectionModel().select(state.getItems().get(0));
@@ -161,52 +148,101 @@ public class ItemDetailsPageController extends GridPane {
             grid.setDisable(after, "chbInPossession", "cbStatus");
         });
         //in possession
-        addNode("lblInPossession", "Label", "In Possession: ");
-        addNode("chbInPossession", "CheckBox");
+        grid.addNode("lblInPossession", "Label", "In Possession: ");
+        grid.addNode("chbInPossession", "CheckBox");
         grid.addRow("lblInPossession", "chbInPossession");
         //state
-        addNode("lblStatus", "Label", "Status: ");
-        addNode("cbStatus", "ChoiceBox", (Object[]) Status.values());
+        grid.addNode("lblStatus", "Label", "Status: ");
+        grid.addNode("cbStatus", "ChoiceBox", (Object[]) Status.values());
         ((ChoiceBox) grid.getNode("cbStatus")).getSelectionModel().select(0);
         grid.addRow("lblStatus", "cbStatus");
     }
 
-    //</editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="button actions">
     /**
-     * Saves the item to the database
+     * Adds all controls below the defaults
      */
-    private void save() {
+    private void addAfterDefaults() {
+        grid.addNode("lblObjectives", "Label", "Objectives: ");
+        grid.addNode("btnObjectives", "Button", "See Objectives");
+        ((Button) grid.getNode("btnObjectives")).setOnAction(event -> {
+
+            if (!saveEntity()){
+                controller.throwException("Please first fill in the title and date first");
+                return;
+            }
+
+            Game game = (Game) controller.getEntityFromId(Game.class, ((Item)entity).getId());
+            controller.addToScenePath(new GameObjectivesPageController(game));
+        });
+        grid.addRow("lblObjectives", "btnObjectives");
+    }
+
+    //</editor-fold>
+    /**
+     * Fills in the form
+     */
+    @Override
+    protected void fillNodes() {
+
+        //disable type change
+        grid.setDisable(true, "cbType");
+
+        fillDefaultNodes();
+        if (entity.getClass() == Book.class) ((ComboBox)grid.getNode("cmbAuthor")).getSelectionModel().select(((Book)entity).getAuthor());
+
+    }
+
+    /**
+     * Fills in the form with all the fields from {@link domain.item.Item}
+     */
+    private void fillDefaultNodes() {
+        Item item = (Item)entity;
+        ((ChoiceBox) grid.getNode("cbType")).getSelectionModel().select(item.getType());
+        ((TextField) grid.getNode("txtTitle")).setText(item.getTitle());
+        MyDate cal = item.getReleaseDate();
+        ((DatePicker) grid.getNode("dpReleaseDate")).setValue(cal.getDateAsLocalDate());
+        ((CheckBox) grid.getNode("chbInPossession")).setSelected(item.isInCollection());
+        ((ChoiceBox) grid.getNode("cbStatus")).getSelectionModel().select(item.getStatus());
+    }
+
+    //</editor-fold>
+    
+    /**
+     * Saves the Item to the db
+     * @return Whether the saving succeeded
+     */
+    @Override
+    protected boolean saveEntity() {
         Item i;
         try {
-            ItemType type = (ItemType) ((ChoiceBox) getNode("cbType")).getSelectionModel().getSelectedItem();
-            String title = ((TextField) getNode("txtTitle")).getText();
-            MyDate releaseDate = new MyDate(((DatePicker) getNode("dpReleaseDate")).getValue());
-            boolean inCollection = ((CheckBox) getNode("chbInPossession")).isSelected();
-            Status status = (Status) ((ChoiceBox) getNode("cbStatus")).getSelectionModel().getSelectedItem();
+            ItemType type = (ItemType) ((ChoiceBox) grid.getNode("cbType")).getSelectionModel().getSelectedItem();
+            String title = ((TextField) grid.getNode("txtTitle")).getText();
+            MyDate releaseDate = new MyDate(((DatePicker) grid.getNode("dpReleaseDate")).getValue());
+            boolean inCollection = ((CheckBox) grid.getNode("chbInPossession")).isSelected();
+            Status status = (Status) ((ChoiceBox) grid.getNode("cbStatus")).getSelectionModel().getSelectedItem();
 
             switch (type) {
                 case Book:
-                    ComboBox cmbAuthor = (ComboBox) getNode("cmbAuthor");
+                    ComboBox cmbAuthor = (ComboBox) grid.getNode("cmbAuthor");
                     Person author = (Person) cmbAuthor.getItems().get(cmbAuthor.getSelectionModel().getSelectedIndex());
-                    
+
                     i = getItemToSave(new Book(title, releaseDate, author, inCollection, status));
                     break;
                 default:
                     i = getItemToSave(ItemFactory.createItem(type, title, releaseDate, inCollection, status));
             }
+
+            if (entity == null) {
+                controller.addEntity(i);
+            } else {
+                controller.editEntity(i);
+            }
+
+            return true;
         } catch (Exception e) {
             controller.throwException(e);
-            return;
+            return false;
         }
-
-        if (item == null) {
-            controller.addEntity(i);
-        } else {
-            controller.editEntity(i);
-        }
-
-        closeStage();
     }
 
     /**
@@ -216,65 +252,13 @@ public class ItemDetailsPageController extends GridPane {
      * @return
      */
     private Item getItemToSave(Item i) {
-        if (item == null) {
+        if (entity == null) {
             return i;
         } else {
+            Item item = (Item)entity;
             item.editItem(i);
             return item;
         }
-    }
-
-    //</editor-fold>
-    /**
-     * Adds a node to the grid
-     *
-     * @param key
-     * @param type
-     * @param values
-     */
-    private void addNode(String key, String type, Object... values) {
-        grid.addNode(key, GUIHelper.createControl(type, values));
-    }
-
-    /**
-     * Fills in the form
-     */
-    private void fillNodes() {
-
-        //disable type change
-        grid.setDisable(true, "cbType");
-
-        fillDefaultNodes();
-        //TODO author if (iClass == Book.class) ((TextField)getNode("txtAuthor")).setText(((Book)item).getAuthor());
-
-    }
-
-    /**
-     * Fills in the form with all the fields from {@link domain.item.Item}
-     */
-    private void fillDefaultNodes() {
-        ((ChoiceBox) getNode("cbType")).getSelectionModel().select(item.getType());
-        ((TextField) getNode("txtTitle")).setText(item.getTitle());
-        MyDate cal = item.getReleaseDate();
-        ((DatePicker) getNode("dpReleaseDate")).setValue(cal.getDateAsLocalDate());
-        ((CheckBox) getNode("chbInPossession")).setSelected(item.isInCollection());
-        ((ChoiceBox) getNode("cbStatus")).getSelectionModel().select(item.getStatus());
-    }
-
-    /**
-     * @param key
-     * @return a node from the grid
-     */
-    private Node getNode(String key) {
-        return grid.getNode(key);
-    }
-
-    //</editor-fold>
-    /**
-     * Closes the stage
-     */
-    private void closeStage() {
-        controller.removeSceneFromPath();
     }
 
 }

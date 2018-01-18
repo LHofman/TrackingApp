@@ -1,5 +1,6 @@
 package domain;
 
+import domain.entity.*;
 import domain.item.*;
 import java.time.LocalDate;
 import java.util.*;
@@ -33,7 +34,7 @@ public final class DomainController extends Observable{
         PersistenceController.start();
         PersistenceAdministrator pa = PersistenceController.getPersistenceAdministrator();
         Arrays.stream(new Class[]{Book.class, Game.class, Movie.class, TvShow.class}).forEach(c -> repos.put(c, new ItemRepository(c, pa)));
-        Arrays.stream(new Class[]{Person.class}).forEach(c -> repos.put(c, new Repository(c, pa)));
+        Arrays.stream(new Class[]{GameObjective.class, Person.class}).forEach(c -> repos.put(c, new Repository(c, pa)));
         
         pathToScene = new Stack<>();
         pathToPredicates = new Stack<>();
@@ -55,6 +56,10 @@ public final class DomainController extends Observable{
     //<editor-fold defaultstate="collapsed" desc="CRUD">
     
     //<editor-fold defaultstate="collapsed" desc="get items">
+    
+    public IEntity getEntityFromId(Class entityClass, int id){
+        return repos.get(entityClass).getFromId(id);
+    }
     
     /**
      * @return A SortedList of all {@link domain.item.Item}

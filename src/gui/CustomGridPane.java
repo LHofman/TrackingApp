@@ -9,6 +9,11 @@ import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -24,7 +29,7 @@ public class CustomGridPane {
     
     protected final GridPane grid;
     protected final Map<String, Node> nodes;
-    protected int rows = 0;
+    protected int rows = 0, columns = 0;
     protected static int ROWHEIGHT;
     
     //</editor-fold>
@@ -44,6 +49,15 @@ public class CustomGridPane {
     
     //<editor-fold defaultstate="collapsed" desc="nodes methods">
     
+    /**
+     * Creats and adds the node to the grid
+     * @param key
+     * @param type
+     * @param values 
+     */
+    public void addNode(String key, String type, Object... values){
+        addNode(key, GUIHelper.createControl(type, values));
+    }
     /**
      * add a node to the gridpane
      * @param key
@@ -99,6 +113,29 @@ public class CustomGridPane {
         addRow("btnSave", "btnCancel");
     }
     
+    public void clearFields() {
+        nodes.keySet().forEach((key -> {
+            Object value = nodes.get(key);
+            switch (value.getClass().getName()) {
+                case "javafx.scene.control.ChoiceBox":
+                    ((ChoiceBox) value).getSelectionModel().select(0);
+                    break;
+                case "javafx.scene.control.TextField":
+                    ((TextField) value).setText("");
+                    break;
+                case "javafx.scene.control.DatePicker":
+                    ((DatePicker) value).setValue(null);
+                    break;
+                case "javafx.scene.control.ComboBox":
+                    ((ComboBox) value).getSelectionModel().select(0);
+                    break;
+                case "javafx.scene.control.CheckBox":
+                    ((CheckBox)value).setSelected(false);
+                    break;
+            }
+        }));
+    }
+
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="grid methods">
@@ -114,6 +151,7 @@ public class CustomGridPane {
         grid.getRowConstraints().add(new RowConstraints(ROWHEIGHT));
                 
         grid.addRow(rows++, getNodes(nodes).toArray(new Node[length]));
+        columns = Math.max(columns, nodes.length);
     }
     /**
      * Adds a row to the gridpane
@@ -128,26 +166,21 @@ public class CustomGridPane {
     }
     
     /**
-     * Sets the constraints of the grid
+     * Sets the cnostraints of the grid
+     */
+    public void setUpConstraints(){
+        setUpConstraints(GUIHelper.STAGEWIDTH, GUIHelper.STAGEHEIGHT-100);
+    }
+    /**
+     * Sets the cnostraints of the grid
      * @param width
      * @param height
-     * @param columns
      */
-    public void setUpConstraints(int width, int height, int columns) {
-        int widthColumn1 = 200;
-        int widthExtraColumns = 200;
-        ColumnConstraints column1Constraints = new ColumnConstraints();
-        column1Constraints.setHalignment(HPos.RIGHT);
-        column1Constraints.setPrefWidth(widthColumn1); //Column Width
-        setColumnConstraint(1, column1Constraints);
-        ColumnConstraints column2Constraints = new ColumnConstraints();
-        column2Constraints.setHalignment(HPos.LEFT);
-        column2Constraints.setPrefWidth((width-widthColumn1)-(widthExtraColumns*(columns-2))); //Column Width
-        setColumnConstraint(2, column2Constraints);
-        for (int i=3; i<=columns; i++){
+    public void setUpConstraints(int width, int height){
+        for (int i=1; i<=columns; i++){
             ColumnConstraints cc = new ColumnConstraints();
-            cc.setHalignment(HPos.LEFT);
-            cc.setPrefWidth(widthExtraColumns);
+            cc.setHalignment(i==1?HPos.RIGHT:HPos.LEFT);
+            cc.setPrefWidth(width/columns);
             setColumnConstraint(i, cc);
         }
 
@@ -155,7 +188,8 @@ public class CustomGridPane {
             setRowConstraint(i, new RowConstraints(height / rows));
         }
     }
-
+    
+    
     /**
      * Sets the column constraints
      * @param columnIndex

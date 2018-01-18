@@ -1,7 +1,7 @@
 package gui;
 
 import domain.DomainController;
-import domain.Person;
+import domain.entity.Person;
 import domain.enums.ItemType;
 import domain.enums.Status;
 import java.util.HashMap;
@@ -120,9 +120,10 @@ public class CustomFilterGrid extends CustomGridPane {
      * </ul>
      *
      * @param key
-     * @param value
+     * @param values
      */
-    private void addNode(String key, String type, Object... values) {
+    @Override
+    public void addNode(String key, String type, Object... values) {
         EventHandler changeFilterEvent = event -> {changeFilter();};
         Node node = GUIHelper.createControl(type, values);
         switch (node.getClass().getName()) {
@@ -149,27 +150,7 @@ public class CustomFilterGrid extends CustomGridPane {
      * Clears the filters
      */
     public void clearFilters() {
-        nodes.keySet().forEach((key -> {
-            Object value = nodes.get(key);
-            switch (value.getClass().getName()) {
-                case "javafx.scene.control.ChoiceBox":
-                    ((ChoiceBox) value).getSelectionModel().select(0);
-                    break;
-                case "javafx.scene.control.TextField":
-                    ((TextField) value).setText("");
-                    break;
-                case "javafx.scene.control.DatePicker":
-                    ((DatePicker) value).setValue(null);
-                    break;
-                case "javafx.scene.control.ComboBox":
-                    ((ComboBox) value).getSelectionModel().select(0);
-                    break;
-                
-            }
-            if (key.equals("chbInCollectionFilter")) {
-                ((CheckBox) value).setSelected(false);
-            }
-        }));
+        clearFields();
         changeFilter();
     }
 

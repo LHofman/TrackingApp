@@ -2,7 +2,7 @@ package domain.item;
 
 import domain.DomainHelper;
 import domain.MyDate;
-import domain.Person;
+import domain.entity.Person;
 import domain.enums.ItemType;
 import domain.enums.Status;
 import java.io.Serializable;

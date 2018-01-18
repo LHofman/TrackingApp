@@ -1,5 +1,6 @@
-package domain;
+package domain.entity;
 
+import domain.DomainHelper;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;

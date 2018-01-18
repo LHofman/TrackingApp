@@ -1,15 +1,20 @@
 package persistence;
 
-import domain.IEntity;
+import domain.entity.IEntity;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  * The administrator of all the entity classes
  */
+
 public class PersistenceAdministrator{
     
     private final EntityManager manager;
@@ -20,6 +25,15 @@ public class PersistenceAdministrator{
         this.transaction = manager.getTransaction();
     }
     
+    public <E extends IEntity> E getFromId(Class<E> eClass, int id){
+        CriteriaBuilder cb = manager.getCriteriaBuilder();
+        CriteriaQuery cq = cb.createQuery();
+        Root e = cq.from(eClass);
+        cq.where(cb.equal(e.get("id"), id));
+        Query query = manager.createQuery(cq);
+        return (E)query.getSingleResult();
+    }
+
     public <E extends IEntity> List<E> getAll(Class<E> eClass){
         return manager.createQuery(manager.getCriteriaBuilder().createQuery(eClass)).getResultList();
     }

@@ -1,5 +1,6 @@
-package domain;
+package domain.entity;
 
+import domain.entity.Person;
 import exceptions.InvalidArgumentException;
 import java.util.Arrays;
 import java.util.Collection;

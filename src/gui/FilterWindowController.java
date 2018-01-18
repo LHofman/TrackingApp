@@ -20,7 +20,7 @@ public final class FilterWindowController extends GridPane{
         
         grid = new CustomFilterGrid(this);
         grid.addFilters("Type", "Author", "Title", "ReleaseDateStart", "ReleaseDateEnd", "InCollection", "Status");
-        grid.setUpConstraints(600, 600, 3);
+        grid.setUpConstraints(600, 600);
     }
     
     /**

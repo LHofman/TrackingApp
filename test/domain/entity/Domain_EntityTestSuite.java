@@ -1,5 +1,6 @@
-package domain.item;
+package domain.entity;
 
+import domain.item.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -8,6 +9,6 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    ItemTest.class, ItemTestInvalid.class, GameTest.class
+    IEntityTest.class, PersonTest.class, PersonTestInvalid.class, GameObjectiveTest.class
 })
-public class Domain_ItemTestSuite {}
+public class Domain_EntityTestSuite {}

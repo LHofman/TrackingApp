@@ -1,5 +1,6 @@
-package domain;
+package domain.entity;
 
+import domain.entity.IEntity;
 import exceptions.InvalidArgumentException;
 import org.junit.Before;
 import org.junit.Test;

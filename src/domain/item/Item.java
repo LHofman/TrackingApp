@@ -1,7 +1,7 @@
 package domain.item;
 
 import domain.DomainHelper;
-import domain.IEntity;
+import domain.entity.IEntity;
 import domain.MyDate;
 import domain.enums.ItemType;
 import domain.enums.Status;

@@ -24,6 +24,8 @@ import javafx.scene.text.Font;
  */
 public abstract class GUIHelper {
 
+    public static int STAGEHEIGHT = 750, STAGEWIDTH = 1200;
+    
     /**
      * Helper method for loading fxml files
      * @param fileName

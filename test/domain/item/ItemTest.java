@@ -51,11 +51,11 @@ public class ItemTest {
      */
     @Test
     public void testEditItem(){
-        instance.editItem(new ItemImpl("title2", new MyDate(2017, 12, 24), true, Status.Doing));
+        instance.editItem(new ItemImpl("title2", new MyDate(2017, 12, 24), true, Status.ToDo));
         assertEquals("title2", instance.getTitle());
         assertEquals(0, instance.getReleaseDate().compareTo(new MyDate(2017, 12, 24)));
         assertTrue(instance.isInCollection());
-        assertEquals(Status.Doing, instance.getStatus());
+        assertEquals(Status.ToDo, instance.getStatus());
     }
     
     /**
@@ -68,7 +68,7 @@ public class ItemTest {
         assertEquals("title", instance.getTitle());
         assertEquals(0, instance.getReleaseDate().compareTo(new MyDate(2017, 12, 25)));
         assertFalse(instance.isInCollection());
-        assertEquals(Status.ToDo, instance.getStatus());
+        assertEquals(Status.Done, instance.getStatus());
     }
     
     /**
@@ -77,11 +77,11 @@ public class ItemTest {
      */
     @Test
     public void testEditItemWrongType(){
-        instance.editItem(new Movie("title2", new MyDate(2017, 12, 24), true, Status.Doing));
+        instance.editItem(new Movie("title2", new MyDate(2017, 12, 24), true, Status.Done));
         assertEquals("title", instance.getTitle());
         assertEquals(0, instance.getReleaseDate().compareTo(new MyDate(2017, 12, 25)));
         assertFalse(instance.isInCollection());
-        assertEquals(Status.ToDo, instance.getStatus());
+        assertEquals(Status.Done, instance.getStatus());
     }
     
     //</editor-fold>
@@ -93,7 +93,7 @@ public class ItemTest {
         }
         @Override
         public ItemType getType() {
-            return ItemType.Movie;
+            return ItemType.Book;
         }
     }
 

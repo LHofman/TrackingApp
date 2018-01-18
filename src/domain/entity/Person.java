@@ -1,5 +1,6 @@
-package domain;
+package domain.entity;
 
+import domain.DomainHelper;
 import domain.item.Book;
 import java.io.Serializable;
 import java.util.ArrayList;

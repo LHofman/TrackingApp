@@ -8,6 +8,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    domain.DomainTestSuite.class, domain.item.Domain_ItemTestSuite.class, exceptions.ExceptionsTestSuite.class
+    domain.DomainTestSuite.class, domain.item.Domain_ItemTestSuite.class, exceptions.ExceptionsTestSuite.class, 
+    domain.entity.Domain_EntityTestSuite.class
 })
 public class TestSuite {}

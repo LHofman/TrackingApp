@@ -1,5 +1,7 @@
 package domain;
 
+import domain.entity.Person;
+import domain.entity.IEntity;
 import domain.enums.ItemType;
 import domain.enums.Status;
 import domain.item.Book;

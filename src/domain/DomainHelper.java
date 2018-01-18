@@ -7,9 +7,14 @@ import domain.item.Game;
 import domain.item.Movie;
 import domain.item.TvShow;
 import exceptions.InvalidArgumentException;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -142,7 +147,9 @@ public abstract class DomainHelper {
      * @return the statuses available for the specified type
      */
     public static Status[] getAvailableStatuses(ItemType type) {
-        if (type==null) return null;
+        if (type == null) {
+            return null;
+        }
         switch (type) {
             case Book:
                 return new Book().getAvailableStatuses();
@@ -155,6 +162,21 @@ public abstract class DomainHelper {
             default:
                 return new Status[0];
         }
+    }
+    
+    public static <T> void sortList(List<T> list, Comparator comparator){
+        list.sort(comparator);
+    }
+
+    public static boolean openLink(String link) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                desktop.browse(new URI(link));
+                return true;
+            } catch (IOException | URISyntaxException e) {}
+        }
+        return false;
     }
 
 }
