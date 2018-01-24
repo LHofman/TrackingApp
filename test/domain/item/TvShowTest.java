@@ -24,8 +24,17 @@ public class TvShowTest {
      */
     @Before
     public void setUp() {
-        instance = new TvShow("Scrubs", new MyDate(2001, 10 ,2), true, Status.Done, new ArrayList<>());
+        instance = new TvShow("Scrubs", new MyDate(2001, 10 ,2), false, true, Status.Done, new ArrayList<>());
         episodes = Arrays.asList(new Episode[]{new Episode(1, 1, "My First Day", new MyDate(2001, 10, 2), true, true)});
+    }
+    
+    /**
+     * Test of {@link TvShow#setOngoing(boolean)} and {@link TvShow#isOngoing()}
+     */
+    @Test
+    public void testSetGetOngoing() {
+        instance.setOngoing(true);
+        assertTrue(instance.isOngoing());
     }
     
     /**
@@ -70,7 +79,7 @@ public class TvShowTest {
      */
     @Test
     public void testEditTvShow(){
-        instance.editTvShow(new TvShow("Seinfeld", new MyDate(1989, 7, 5), false, Status.Done, episodes));
+        instance.editTvShow(new TvShow("Seinfeld", new MyDate(1989, 7, 5), false, false, Status.Done, episodes));
         assertEquals("Seinfeld", instance.getTitle());
         assertEquals(0, instance.getReleaseDate().compareTo(new MyDate(1989, 7, 5)));
         assertFalse(instance.isInCollection());

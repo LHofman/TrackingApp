@@ -1,13 +1,17 @@
 package domain.entity;
 
+import domain.DomainController;
 import domain.DomainHelper;
 import domain.item.Game;
+import domain.user.UserEpisode;
+import domain.user.UserGameObjective;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -21,12 +25,11 @@ import javax.persistence.OneToMany;
  * An object of {@link domain.item.Game}
  */
 @Entity
-public class GameObjective extends IEntity implements Serializable{
+public class GameObjective extends IEntityUser<UserGameObjective> implements Serializable{
 
     @Column(name = "objectiveIndex")
     private int index;
     private String objective;
-    private boolean completed;
     @ElementCollection
     @JoinTable(name = "GAME_OBJECTIVE", joinColumns = @JoinColumn(name = "ID"))
     @MapKeyColumn(name = "LINK_NAME")
@@ -39,23 +42,24 @@ public class GameObjective extends IEntity implements Serializable{
     @JoinColumn(nullable = true)
     @ManyToOne
     private GameObjective parent;
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.PERSIST)
     private List<GameObjective> objectives;
     
     //<editor-fold defaultstate="collapsed" desc="constructors">
-    public GameObjective() {
-    }
+    public GameObjective() {super();}
 
-    public GameObjective(int index, String objective, boolean completed, Map<String, String> links, List<GameObjective> objectives) {
-        init(index, objective, completed, links, objectives);
+    public GameObjective(int index, String objective, Map<String, String> links, List<GameObjective> objectives) {
+        this();
+        init(index, objective, links, objectives);
     }
 
     public GameObjective(int index, String objective, boolean completed) {
-        this(index, objective, completed, new HashMap<>(), new ArrayList<>());
+        this(index, objective, new HashMap<>(), new ArrayList<>());
+        setCompleted(completed);
     }
 
     public GameObjective(int index, String objective) {
-        this(index, objective, false);
+        this(index, objective, new HashMap(), new ArrayList<>());
     }
 
     //</editor-fold>
@@ -80,11 +84,13 @@ public class GameObjective extends IEntity implements Serializable{
     }
 
     public boolean isCompleted() {
-        return completed;
+        createUserEntity();
+        return userEntity.isCompleted();
     }
 
     public void setCompleted(boolean completed) {
-        this.completed = completed;
+        createUserEntity();
+        userEntity.setCompleted(completed);
     }
 
     public Map<String, String> getLinks() {
@@ -107,7 +113,7 @@ public class GameObjective extends IEntity implements Serializable{
         return game;
     }
     
-    public List<GameObjective> getObjectives(){ return objectives;}
+    public List<GameObjective> getObjectives(){ return new ArrayList<>(objectives);}
     public void setObjectives(List<GameObjective> objectives){
         if (objectives==null) this.objectives = new ArrayList<>();
         else this.objectives = new ArrayList<>(objectives);
@@ -119,17 +125,21 @@ public class GameObjective extends IEntity implements Serializable{
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="methods">
+    
+    @Override
+    protected void createNewUserEntity(){
+        userEntity = new UserGameObjective(DomainController.getUser(), this);
+    }
+    
     /**
      * Sets all the values
      *
      * @param index
      * @param objective
-     * @param completed
      */
-    private void init(int index, String objective, boolean completed, Map<String, String> links, List<GameObjective> objectives) {
+    private void init(int index, String objective, Map<String, String> links, List<GameObjective> objectives) {
         setIndex(index);
         setObjective(objective);
-        setCompleted(completed);
         setLinks(links);
         setObjectives(objectives);
     }
@@ -143,7 +153,7 @@ public class GameObjective extends IEntity implements Serializable{
         if (gameObjective == null) {
             return;
         }
-        init(gameObjective.getIndex(), gameObjective.getObjective(), gameObjective.isCompleted(), gameObjective.getLinks(), gameObjective.getObjectives());
+        init(gameObjective.getIndex(), gameObjective.getObjective(), gameObjective.getLinks(), gameObjective.getObjectives());
     }
 
     /**

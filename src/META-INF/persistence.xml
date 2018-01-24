@@ -9,6 +9,13 @@
     <class>domain.entity.Person</class>
     <class>domain.entity.GameObjective</class>
     <class>domain.entity.Episode</class>
+    <class>domain.user.User</class>
+    <class>domain.user.UserBook</class>
+    <class>domain.user.UserGame</class>
+    <class>domain.user.UserMovie</class>
+    <class>domain.user.UserTvShow</class>
+    <class>domain.user.UserEpisode</class>
+    <class>domain.user.UserGameObjective</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/trackingdb?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

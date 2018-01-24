@@ -1,9 +1,11 @@
 package domain.item;
 
+import domain.DomainController;
 import domain.MyDate;
 import domain.entity.Episode;
 import domain.enums.ItemType;
 import domain.enums.Status;
+import domain.user.UserTvShow;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,20 +13,28 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
 @Entity
-public class TvShow extends Item implements Serializable{
+public class TvShow extends Item<UserTvShow> implements Serializable{
 
-    @OneToMany(mappedBy = "tvShow")
+    private boolean ongoing;
+    @OneToMany(mappedBy = "tvShow", cascade = CascadeType.PERSIST)
     private List<Episode> episodes;
     
-    public TvShow(){}
-    public TvShow(String title, MyDate releaseDate) {super(title, releaseDate);}
-    public TvShow(String title, MyDate releaseDate, boolean inCollection, Status status) {this(title, releaseDate, inCollection, status, new ArrayList<>());}
-    public TvShow(String title, MyDate releaseDate, boolean inCollection, Status status, List<Episode> episodes) {
-        init(title, releaseDate, inCollection, status, episodes);
+    public TvShow(){super();}
+    public TvShow(String title, MyDate releaseDate, boolean ongoing){this(title, releaseDate, ongoing, new ArrayList<>());}
+    public TvShow(String title, MyDate releaseDate, boolean ongoing, boolean inCollection, Status status) {this(title, releaseDate, ongoing, inCollection, status, new ArrayList<>());}
+    public TvShow(String title, MyDate releaseDate, boolean ongoing, List<Episode> episodes) {
+        this();
+        init(title, releaseDate, ongoing, episodes);
+    }
+    public TvShow(String title, MyDate releaseDate, boolean ongoing, boolean inCollection, Status status, List<Episode> episodes) {
+        super(title, releaseDate, inCollection, status);
+        setOngoing(ongoing);
+        setEpisodes(episodes);
     }
 
     //<editor-fold defaultstate="collapsed" desc="getters/setters">
@@ -55,23 +65,28 @@ public class TvShow extends Item implements Serializable{
         return new ArrayList<>(seasons);
     }
     
+    public boolean isOngoing(){return ongoing;}
+    public void setOngoing(boolean ongoing){this.ongoing = ongoing;}
+    
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="methods">
+    
+    @Override
+    protected void createNewUserEntity(){
+        userEntity = new UserTvShow(DomainController.getUser(), this);
+    }
     
     /**
      * Sets all the values
      * @param title
      * @param releaseDate
-     * @param inCollection
-     * @param status
+     * @param onGoing
      * @param objectives 
      */
-    private void init(String title, MyDate releaseDate, boolean inCollection, Status status, List<Episode> episodes){
-        setTitle(title);
-        setReleaseDate(releaseDate);
-        setInCollection(inCollection);
-        setStatus(status);
+    private void init(String title, MyDate releaseDate, boolean ongoing, List<Episode> episodes){
+        init(title, releaseDate);
+        setOngoing(ongoing);
         setEpisodes(episodes);
     }
     
@@ -81,7 +96,7 @@ public class TvShow extends Item implements Serializable{
      */
     public void editTvShow(TvShow tvShow){
         if (tvShow==null) return;
-        init(tvShow.getTitle(), tvShow.getReleaseDate(), tvShow.isInCollection(), tvShow.getStatus(), tvShow.getEpisodes());
+        init(tvShow.getTitle(), tvShow.getReleaseDate(), tvShow.isOngoing(), tvShow.getEpisodes());
     }
     
     /**
@@ -140,14 +155,6 @@ public class TvShow extends Item implements Serializable{
                 return seasonDiff!=0 ? seasonDiff : t.getEpisodeNr() - t1.getEpisodeNr();
             }
         });
-    }
-    
-    /**
-     * @return the available statuses for this item
-     */
-    @Override
-    public Status[] getAvailableStatuses() {
-        return new Status[]{Status.ToDo, Status.Doing, Status.OnHold, Status.OnTrack, Status.Done};
     }
     
     @Override

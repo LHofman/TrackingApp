@@ -1,17 +1,19 @@
 package domain.item;
 
+import domain.DomainController;
 import domain.DomainHelper;
 import domain.MyDate;
 import domain.entity.Person;
 import domain.enums.ItemType;
 import domain.enums.Status;
+import domain.user.UserBook;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Book extends Item implements Serializable{
+public class Book extends Item<UserBook> implements Serializable{
     
     @JoinColumn(nullable = false)
     @ManyToOne
@@ -19,10 +21,14 @@ public class Book extends Item implements Serializable{
     
     //<editor-fold defaultstate="collapsed" desc="constructors">
     
-    public Book(){}
-    public Book(String title, MyDate releaseDate, Person author) {this(title, releaseDate, author, false, null);}
-    public Book(String title, MyDate releaseDate, Person author, boolean inCollection, Status status) {
-        init(title, releaseDate, author, inCollection, status);
+    public Book(){super();}
+    public Book(String title, MyDate releaseDate, Person author) {
+        this();
+        init(title, releaseDate, author);
+    }
+    public Book(String title, MyDate releaseDate, Person author, boolean inCollection, Status status){
+        super(title, releaseDate, inCollection, status);
+        setAuthor(author);
     }
     
     //</editor-fold>
@@ -39,6 +45,11 @@ public class Book extends Item implements Serializable{
     
     //<editor-fold defaultstate="collapsed" desc="methods">
     
+    @Override
+    protected void createNewUserEntity(){
+        userEntity = new UserBook(DomainController.getUser(), this);
+    }
+    
     /**
      * Sets all the values
      * @param title
@@ -47,8 +58,8 @@ public class Book extends Item implements Serializable{
      * @param inCollection
      * @param status 
      */
-    private void init(String title, MyDate releaseDate, Person author, boolean inCollection, Status status){
-        init(title, releaseDate, inCollection, status);
+    private void init(String title, MyDate releaseDate, Person author){
+        init(title, releaseDate);
         setAuthor(author);
     }
     
@@ -58,17 +69,9 @@ public class Book extends Item implements Serializable{
      */
     public void editBook(Book book){
         if (book==null) return;
-        init(book.getTitle(), book.getReleaseDate(), book.getAuthor(), book.isInCollection(), book.getStatus());
+        init(book.getTitle(), book.getReleaseDate(), book.getAuthor());
     }
     
-    /**
-     * @return the statuses available for this Item
-     */
-    @Override
-    public Status[] getAvailableStatuses() {
-        return new Status[]{Status.ToDo, Status.Doing, Status.OnHold, Status.Done};
-    }
-
     @Override
     public ItemType getType() {
         return ItemType.Book;

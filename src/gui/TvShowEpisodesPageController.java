@@ -98,7 +98,7 @@ public class TvShowEpisodesPageController extends ListPageController<TvShow, Epi
     }
 
     @Override
-    protected void save() {
+    protected Episode save() {
         int episodeNr = Integer.parseInt(((TextField) grid.getNode("txtEpisodeNr")).getText());
         String title = ((TextField) grid.getNode("txtTitle")).getText();
         MyDate releaseDate = new MyDate(((DatePicker) grid.getNode("dpReleaseDate")).getValue());
@@ -107,8 +107,11 @@ public class TvShowEpisodesPageController extends ListPageController<TvShow, Epi
 
         Episode episode = new Episode(season, episodeNr, title, releaseDate, watched, collected);
         entity.addEpisodes(episode);
+        controller.editEntity(entity);
 
         grid.clearFields();
+        
+        return episode;
     }
 
     @Override

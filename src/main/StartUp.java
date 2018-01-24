@@ -1,5 +1,7 @@
 package main;
 
+import domain.DomainController;
+import domain.user.User;
 import gui.GUIHelper;
 import gui.WelcomePageController;
 import javafx.application.Application;
@@ -17,6 +19,7 @@ public class StartUp extends Application{
     
     @Override
     public void start(Stage primaryStage) throws Exception {
+        DomainController.setUser((User)DomainController.getInstance().getEntityFromId(User.class, 1));
         WelcomePageController welcomePage = new WelcomePageController();
         Scene mainScene = new Scene(welcomePage);
         primaryStage.setTitle("Tracking App");

@@ -102,7 +102,8 @@ public abstract class ListPageController<E extends Item, T extends Object> exten
 
         grid.addButtons(saveEvent -> {
             try {
-                save();
+                T newItem = save();
+                list.add(newItem);
             } catch (Exception e) {
                 controller.throwException(e);
             }
@@ -189,7 +190,7 @@ public abstract class ListPageController<E extends Item, T extends Object> exten
     /**
      * Saves the entity
      */
-    protected abstract void save();
+    protected abstract T save();
 
     /**
      * @param object 

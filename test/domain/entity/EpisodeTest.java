@@ -22,7 +22,7 @@ public class EpisodeTest {
      */
     @Before
     public void setUp() {
-        tvShow = new TvShow("The Legend of Korra", new MyDate(2012, 4, 14), true, Status.ToDo);
+        tvShow = new TvShow("The Legend of Korra", new MyDate(2012, 4, 14), false, true, Status.ToDo);
         instance = new Episode(1, 1, "Welcome to Republic City", new MyDate(2012, 4, 14), true, true);
         instance.setTvShow(tvShow);
     }
@@ -142,7 +142,7 @@ public class EpisodeTest {
      */
     @Test
     public void testSetGetTvShow(){
-        instance.setTvShow(new TvShow("test", new MyDate(2001, 1, 1)));
+        instance.setTvShow(new TvShow("test", new MyDate(2001, 1, 1), true));
         assertEquals("test", instance.getTvShow().getTitle());
     }
     
@@ -160,13 +160,11 @@ public class EpisodeTest {
      */
     @Test
     public void testInit(){
-        instance.init(1, 2, "A Leaf in the Wind", new MyDate(2012, 4, 14), true, true);
+        instance.init(1, 2, "A Leaf in the Wind", new MyDate(2012, 4, 14));
         assertEquals(1, instance.getSeason());
         assertEquals(2, instance.getEpisodeNr());
         assertEquals("A Leaf in the Wind", instance.getTitle());
         assertEquals(0, instance.getReleaseDate().compareTo(new MyDate(2012, 4, 14)));
-        assertEquals(true, instance.isWatched());
-        assertEquals(true, instance.isInCollection());
     }
     
     /**

@@ -16,6 +16,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 
@@ -102,6 +103,7 @@ public abstract class GUIHelper {
             case "ComboBox": return new ComboBox(FXCollections.observableArrayList(values));
             case "DatePicker": return new DatePicker();
             case "Label": return createLabel(value);
+            case "ListView": return new ListView();
             case "TextField": return createTextField();
         }
         return null;

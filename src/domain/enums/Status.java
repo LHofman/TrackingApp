@@ -13,8 +13,7 @@ package domain.enums;
 public enum Status {
     ToDo ("To Do"), 
     Doing ("Doing"), 
-    OnHold ("On Hold"), 
-    OnTrack ("On Track"), 
+    OnHold ("On Hold"),
     Done ("Done");
     
     private final String value;

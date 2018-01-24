@@ -1,5 +1,6 @@
 package domain;
 
+import domain.user.User;
 import domain.entity.*;
 import domain.item.*;
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ public final class DomainController extends Observable{
     //<editor-fold defaultstate="collapsed" desc="variables">
     
     private static DomainController instance;
+    private static User user;
     private final Stack<Pane> pathToScene;
     private final Map<Class, Repository> repos;
     private final ObservableList<Item> items;
@@ -34,7 +36,7 @@ public final class DomainController extends Observable{
         PersistenceController.start();
         PersistenceAdministrator pa = PersistenceController.getPersistenceAdministrator();
         Arrays.stream(new Class[]{Book.class, Game.class, Movie.class, TvShow.class}).forEach(c -> repos.put(c, new ItemRepository(c, pa)));
-        Arrays.stream(new Class[]{Episode.class, GameObjective.class, Person.class}).forEach(c -> repos.put(c, new Repository(c, pa)));
+        Arrays.stream(new Class[]{Episode.class, GameObjective.class, Person.class, User.class}).forEach(c -> repos.put(c, new Repository(c, pa)));
         
         pathToScene = new Stack<>();
         pathToPredicates = new Stack<>();
@@ -270,6 +272,11 @@ public final class DomainController extends Observable{
     
     //</editor-fold>
 
+    public static void setUser(User user){
+        DomainController.user = user;
+    }
+    public static User getUser(){return user;}
+    
     //</editor-fold>
 
 }

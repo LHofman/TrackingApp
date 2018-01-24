@@ -1,8 +1,10 @@
 package domain.entity;
 
+import domain.DomainController;
 import domain.DomainHelper;
 import domain.MyDate;
 import domain.item.TvShow;
+import domain.user.UserEpisode;
 import java.io.Serializable;
 import java.util.Calendar;
 import javax.persistence.Column;
@@ -17,7 +19,7 @@ import javax.persistence.Transient;
  * A particular episode of a {@link TvShow}
  */
 @Entity
-public class Episode extends IEntity implements Serializable{
+public class Episode extends IEntityUser<UserEpisode> implements Serializable{
     
     //<editor-fold defaultstate="collapsed" desc="variables">
     
@@ -29,8 +31,6 @@ public class Episode extends IEntity implements Serializable{
     private String title;
     @Temporal(TemporalType.DATE)
     private Calendar releaseDate;
-    private boolean watched;
-    private boolean inCollection;
     
     @Transient
     private MyDate myReleaseDate;
@@ -43,9 +43,12 @@ public class Episode extends IEntity implements Serializable{
     
     //<editor-fold defaultstate="collapsed" desc="constructors">
     
-    public Episode(){}
+    public Episode(){super();}
     public Episode(int season, int episodeNr, String title, MyDate releaseDate, boolean watched, boolean inCollection){
-        init(season, episodeNr, title, releaseDate, watched, inCollection);
+        this();
+        init(season, episodeNr, title, releaseDate);
+        setWatched(watched);
+        setInCollection(inCollection);
     }
     public Episode(int season, int episodeNr, String title, MyDate releaseDate){
         this(season, episodeNr, title, releaseDate, false, false);
@@ -88,11 +91,23 @@ public class Episode extends IEntity implements Serializable{
         this.releaseDate = releaseDate.getDate();
     }
     
-    public boolean isWatched() {return watched;}
-    public void setWatched(boolean watched) {this.watched = watched;}
+    public boolean isWatched() {
+        createUserEntity();
+        return userEntity.isWatched();
+    }
+    public void setWatched(boolean watched) {
+        createUserEntity();
+        userEntity.setWatched(watched);
+    }
 
-    public boolean isInCollection() {return inCollection;}
-    public void setInCollection(boolean inCollection) {this.inCollection = inCollection;}
+    public boolean isInCollection() {
+        createUserEntity();
+        return userEntity.isInCollection();
+    }
+    public void setInCollection(boolean inCollection) {
+        createUserEntity();
+        userEntity.setInCollection(inCollection);
+    }
 
     public TvShow getTvShow(){return tvShow;}
     public void setTvShow(TvShow tvShow){
@@ -104,22 +119,23 @@ public class Episode extends IEntity implements Serializable{
 
     //<editor-fold defaultstate="collapsed" desc="methods">
     
+    @Override
+    protected void createNewUserEntity(){
+        userEntity = new UserEpisode(DomainController.getUser(), this);
+    }
+    
     /**
      * Sets all the values
      * @param season
      * @param episodeNr
      * @param title
      * @param releaseDate
-     * @param watched
-     * @param inCollection 
      */
-    protected void init(int season, int episodeNr, String title, MyDate releaseDate, boolean watched, boolean inCollection){
+    protected void init(int season, int episodeNr, String title, MyDate releaseDate){
         setSeason(season);
         setEpisodeNr(episodeNr);
         setTitle(title);
         setReleaseDate(releaseDate);
-        setWatched(watched);
-        setInCollection(inCollection);
     }
     
     /**
@@ -128,7 +144,7 @@ public class Episode extends IEntity implements Serializable{
      */
     public void editEpisode(Episode episode){
         if (episode==null) return;
-        init(episode.getSeason(), episode.getEpisodeNr(), episode.getTitle(), episode.getReleaseDate(), episode.isWatched(), episode.isInCollection());
+        init(episode.getSeason(), episode.getEpisodeNr(), episode.getTitle(), episode.getReleaseDate());
     }
     
     @Override

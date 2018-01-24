@@ -6,6 +6,7 @@ import domain.enums.ItemType;
 import domain.enums.Status;
 import domain.item.Book;
 import domain.item.Movie;
+import domain.user.UserBook;
 import exceptions.InvalidArgumentException;
 import java.util.Arrays;
 import java.util.List;
@@ -296,7 +297,7 @@ public class DomainHelperTest {
      */
     @Test
     public void testGetAvailableStatuses(){
-        Assert.assertArrayEquals(new Book().getAvailableStatuses(), DomainHelper.getAvailableStatuses(ItemType.Book));
+        Assert.assertArrayEquals(new UserBook().getAvailableStatuses(), DomainHelper.getAvailableStatuses(ItemType.Book));
     }
     
     /**

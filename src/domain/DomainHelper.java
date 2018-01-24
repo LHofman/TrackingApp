@@ -2,10 +2,10 @@ package domain;
 
 import domain.enums.ItemType;
 import domain.enums.Status;
-import domain.item.Book;
-import domain.item.Game;
-import domain.item.Movie;
-import domain.item.TvShow;
+import domain.user.UserBook;
+import domain.user.UserGame;
+import domain.user.UserMovie;
+import domain.user.UserTvShow;
 import exceptions.InvalidArgumentException;
 import java.awt.Desktop;
 import java.io.IOException;
@@ -152,13 +152,13 @@ public abstract class DomainHelper {
         }
         switch (type) {
             case Book:
-                return new Book().getAvailableStatuses();
+                return new UserBook().getAvailableStatuses();
             case Game:
-                return new Game().getAvailableStatuses();
+                return new UserGame().getAvailableStatuses();
             case Movie:
-                return new Movie().getAvailableStatuses();
+                return new UserMovie().getAvailableStatuses();
             case TvShow:
-                return new TvShow().getAvailableStatuses();
+                return new UserTvShow().getAvailableStatuses();
             default:
                 return new Status[0];
         }
@@ -177,6 +177,10 @@ public abstract class DomainHelper {
             } catch (IOException | URISyntaxException e) {}
         }
         return false;
+    }
+    
+    public static <T> T getLast(List<T> list){
+        return list.get(list.size()-1);
     }
 
 }

@@ -1,14 +1,13 @@
 package domain.item;
 
 import domain.DomainHelper;
-import domain.entity.IEntity;
 import domain.MyDate;
+import domain.entity.IEntityUser;
 import domain.enums.ItemType;
 import domain.enums.Status;
+import domain.user.UserItem;
 import java.util.Calendar;
 import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -22,9 +21,10 @@ import javax.persistence.Transient;
  * <li>{@link Movie}</li>
  * <li>{@link TvShow}</li>
  * </ul>
+ * @param <T> subclass of {@link UserItem}
  */
 @MappedSuperclass
-public abstract class Item extends IEntity{
+public abstract class Item<T extends UserItem> extends IEntityUser<T>{
     
     //<editor-fold defaultstate="collapsed" desc="variables">
     
@@ -33,9 +33,6 @@ public abstract class Item extends IEntity{
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
     private Calendar releaseDate;
-    private boolean inCollection;
-    @Enumerated(EnumType.STRING)
-    private Status status;
     
     @Transient
     private MyDate myReleaseDate;
@@ -44,12 +41,15 @@ public abstract class Item extends IEntity{
     
     //<editor-fold defaultstate="collapsed" desc="constructors">
     
-    public Item(){}
+    public Item(){super();}
     public Item(String title, MyDate releaseDate){
-        this(title, releaseDate, false, null);
+        this();
+        init(title, releaseDate);
     }
     public Item(String title, MyDate releaseDate, boolean inCollection, Status status){
-        init(title, releaseDate, inCollection, status);
+        this(title, releaseDate);
+        setInCollection(inCollection);
+        setStatus(status);
     }
     
     //</editor-fold>
@@ -77,18 +77,23 @@ public abstract class Item extends IEntity{
         this.releaseDate = releaseDate.getDate();
     }
 
-    public boolean isInCollection() {return inCollection;}
-    public void setInCollection(boolean inCollection) {
-        this.inCollection = inCollection;
+    public Status getStatus(){
+        createUserEntity();
+        return userEntity.getStatus();
     }
-
-    public Status getStatus() {return status;}
-    public void setStatus(Status status) {
-        if (status==null) status=Status.ToDo;
-        DomainHelper.checkForStateValue("state", status, getAvailableStatuses());
-        this.status = status;
+    public void setStatus(Status status){
+        createUserEntity();
+        userEntity.setStatus(status);
     }
     
+    public boolean isInCollection(){
+        createUserEntity();
+        return userEntity.isInCollection();
+    }
+    public void setInCollection(boolean inCollection){
+        createUserEntity();
+        userEntity.setInCollection(inCollection);
+    }
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="methods">
@@ -97,14 +102,10 @@ public abstract class Item extends IEntity{
      * Sets all the values
      * @param title
      * @param releaseDate
-     * @param inCollection
-     * @param status 
      */
-    protected void init(String title, MyDate releaseDate, boolean inCollection, Status status){
+    protected void init(String title, MyDate releaseDate){
         setTitle(title);
         setReleaseDate(releaseDate);
-        setInCollection(inCollection);
-        setStatus(status);
     }
     
     /**
@@ -113,14 +114,7 @@ public abstract class Item extends IEntity{
      */
     public void editItem(Item item){
         if (item==null || item.getType()!=getType()) return;
-        init(item.getTitle(), item.getReleaseDate(), item.isInCollection(), item.getStatus());
-    }
-    
-    /**
-     * @return the available statuses for this item
-     */
-    public Status[] getAvailableStatuses(){
-        return new Status[]{Status.ToDo, Status.Done};
+        init(item.getTitle(), item.getReleaseDate());
     }
     
     /**

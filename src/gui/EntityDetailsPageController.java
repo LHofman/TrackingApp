@@ -3,10 +3,7 @@ package gui;
 import domain.DomainController;
 import domain.MyDate;
 import domain.entity.Episode;
-import domain.entity.GameObjective;
 import domain.entity.IEntity;
-import domain.item.Game;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
@@ -54,31 +51,7 @@ public class EntityDetailsPageController<E extends IEntity> extends GridPane {
      * Fills the grid with fields from {@link domain.item.Item}
      */
     protected void setUpForm() {
-        if (clazz == GameObjective.class) {
-            //objective
-            grid.addNode("lblObjective", "Label", "Objective: ");
-            grid.addNode("txtObjective", "TextField");
-            grid.addRow("lblObjective", "txtObjective");
-            //completed
-            grid.addNode("lblCompleted", "Label", "Completed: ");
-            grid.addNode("chbCompleted", "CheckBox");
-            grid.addRow("lblCompleted", "chbCompleted");
-            //sub-objectives
-            grid.addNode("lblObjectives", "Label", "Objectives: ");
-            grid.addNode("btnObjectives", "Button", "See Objectives");
-            ((Button) grid.getNode("btnObjectives")).setOnAction(event -> {
-
-                if (!saveEntity()) {
-                    controller.throwException("Please first fill in the title and date first");
-                    return;
-                }
-
-                GameObjective gameObjective = (GameObjective) controller.getEntityFromId(GameObjective.class, ((IEntity) entity).getId());
-                Game game = gameObjective.getGame();
-                controller.addToScenePath(new GameObjectivesPageController(game, gameObjective));
-            });
-            grid.addRow("lblObjectives", "btnObjectives");
-        } else if (clazz == Episode.class) {
+        if (clazz == Episode.class) {
             grid.addNode("lblSeason", "Label", "Season: ");
             grid.addNode("txtSeason", "TextField");
             grid.addRow("lblSeason", "txtSeason");
@@ -119,11 +92,7 @@ public class EntityDetailsPageController<E extends IEntity> extends GridPane {
      * Fills in the form
      */
     protected void fillNodes() {
-        if (entity.getClass() == GameObjective.class) {
-            GameObjective objective = (GameObjective) entity;
-            ((TextField) grid.getNode("txtObjective")).setText(objective.getObjective());
-            ((CheckBox) grid.getNode("chbCompleted")).setSelected(objective.isCompleted());
-        }else if (entity.getClass() == Episode.class){
+        if (entity.getClass() == Episode.class){
             Episode episode = (Episode) entity;
             ((TextField)grid.getNode("txtSeason")).setText(""+episode.getSeason());
             ((TextField)grid.getNode("txtEpisodeNr")).setText(""+episode.getEpisodeNr());
@@ -142,16 +111,7 @@ public class EntityDetailsPageController<E extends IEntity> extends GridPane {
      */
     protected boolean saveEntity() {
         try {
-            if (entity.getClass() == GameObjective.class) {
-                String objective = ((TextField) grid.getNode("txtObjective")).getText();
-                boolean completed = ((CheckBox) grid.getNode("chbCompleted")).isSelected();
-
-                GameObjective gameObjective = (GameObjective) entity;
-                gameObjective.setObjective(objective);
-                gameObjective.setCompleted(completed);
-
-                controller.editEntity(gameObjective.getGame());
-            }else if (entity.getClass() == Episode.class){
+            if (entity.getClass() == Episode.class){
                 int season = Integer.parseInt(((TextField)grid.getNode("txtSeason")).getText());
                 int episodeNr = Integer.parseInt(((TextField)grid.getNode("txtEpisodeNr")).getText());
                 String title = ((TextField)grid.getNode("txtTitle")).getText();
@@ -160,12 +120,17 @@ public class EntityDetailsPageController<E extends IEntity> extends GridPane {
                 boolean collected = ((CheckBox)grid.getNode("chbCollected")).isSelected();
                 
                 Episode episode = (Episode) entity;
-                episode.editEpisode(new Episode(season, episodeNr, title, releaseDate, watched, collected));
+                episode.setSeason(season);
+                episode.setEpisodeNr(episodeNr);
+                episode.setTitle(title);
+                episode.setReleaseDate(releaseDate);
+                episode.setWatched(watched);
+                episode.setInCollection(collected);
                 
                 controller.editEntity(episode.getTvShow());                
             }
             return true;
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             controller.throwException(e);
             return false;
         }

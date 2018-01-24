@@ -10,28 +10,33 @@ import domain.enums.Status;
 public abstract class ItemFactory {
     
     /**
+     * 
      * @param type
      * @param title
      * @param releaseDate
      * @return A newly create instance of an Item
      */
     public static Item createItem(ItemType type, String title, MyDate releaseDate){
-        return createItem(type, title, releaseDate, false, null);
+        switch (type){
+            case Game: return new Game(title, releaseDate);
+            case Movie: return new Movie(title, releaseDate);
+            default: return null;
+        }
     }
+    
     /**
      * 
      * @param type
      * @param title
      * @param releaseDate
      * @param inCollection
-     * @param state
+     * @param status
      * @return A newly create instance of an Item
      */
-    public static Item createItem(ItemType type, String title, MyDate releaseDate, boolean inCollection, Status state){
+    public static Item createItem(ItemType type, String title, MyDate releaseDate, boolean inCollection, Status status){
         switch (type){
-            case Game: return new Game(title, releaseDate, inCollection, state);
-            case Movie: return new Movie(title, releaseDate, inCollection, state);
-            case TvShow: return new TvShow(title, releaseDate, inCollection, state);
+            case Game: return new Game(title, releaseDate, inCollection, status);
+            case Movie: return new Movie(title, releaseDate, inCollection, status);
             default: return null;
         }
     }

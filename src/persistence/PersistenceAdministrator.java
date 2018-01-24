@@ -31,7 +31,11 @@ public class PersistenceAdministrator{
         Root e = cq.from(eClass);
         cq.where(cb.equal(e.get("id"), id));
         Query query = manager.createQuery(cq);
-        return (E)query.getSingleResult();
+        try{
+            return (E)query.getSingleResult();
+        }catch(Exception ex){
+            return null;
+        }
     }
 
     public <E extends IEntity> List<E> getAll(Class<E> eClass){

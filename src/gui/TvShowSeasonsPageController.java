@@ -101,7 +101,7 @@ public class TvShowSeasonsPageController extends ListPageController<TvShow, Inte
     }
 
     @Override
-    protected void save() {
+    protected Integer save() {
         int season = Integer.parseInt(((TextField) grid.getNode("txtSeason")).getText());
         int episodeNr = Integer.parseInt(((TextField) grid.getNode("txtEpisodeNr")).getText());
         String title = ((TextField) grid.getNode("txtTitle")).getText();
@@ -111,8 +111,11 @@ public class TvShowSeasonsPageController extends ListPageController<TvShow, Inte
 
         Episode episode = new Episode(season, episodeNr, title, releaseDate, watched, collected);
         entity.addEpisodes(episode);
+        controller.editEntity(entity);
 
         grid.clearFields();
+        
+        return episode.getSeason();
     }
 
     @Override

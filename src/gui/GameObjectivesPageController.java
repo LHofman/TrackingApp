@@ -1,5 +1,6 @@
 package gui;
 
+import domain.DomainHelper;
 import domain.entity.GameObjective;
 import domain.item.Game;
 import java.util.List;
@@ -111,11 +112,11 @@ public class GameObjectivesPageController extends ListPageController<Game, GameO
 
     @Override
     protected void showDetails(GameObjective object) {
-        controller.addToScenePath(new EntityDetailsPageController(object));
+        controller.addToScenePath(new GameObjectiveDetailsPageController(object));
     }
 
     @Override
-    protected void save() {
+    protected GameObjective save() {
 
         String name = ((TextField) grid.getNode("txtObjective")).getText();
         boolean completed = ((CheckBox) grid.getNode("chbCompleted")).isSelected();
@@ -124,13 +125,16 @@ public class GameObjectivesPageController extends ListPageController<Game, GameO
         if (parent != null) {
             parent.addObjectives(objective);
             controller.editEntity(parent);
+            objective.setId(DomainHelper.getLast(parent.getObjectives()).getId());
         } else {
             entity.addObjectives(objective);
             controller.editEntity(entity);
+            objective.setId(DomainHelper.getLast(entity.getObjectives()).getId());
         }
 
         grid.clearFields();
-
+        
+        return objective;
     }
 
     @Override

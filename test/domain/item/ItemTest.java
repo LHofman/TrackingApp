@@ -3,6 +3,9 @@ package domain.item;
 import domain.*;
 import domain.enums.ItemType;
 import domain.enums.Status;
+import domain.user.UserBook;
+import domain.user.UserItem;
+import domain.user.UserMovie;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -95,6 +98,9 @@ public class ItemTest {
         public ItemType getType() {
             return ItemType.Book;
         }
+
+        @Override
+        protected void createNewUserEntity() {}
     }
 
 }

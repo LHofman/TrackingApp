@@ -4,6 +4,7 @@ import domain.item.Item;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import javafx.collections.FXCollections;
 import persistence.PersistenceAdministrator;
 
 /**
@@ -11,13 +12,14 @@ import persistence.PersistenceAdministrator;
  * Sorts items based on title and release date
  * @param <E> 
  */
-public class ItemRepository<E extends Item> extends Repository{
+public class ItemRepository<E extends Item> extends Repository<E>{
     
-    public ItemRepository(Class iClass, PersistenceAdministrator pa) {
+    public ItemRepository(Class<E> iClass, PersistenceAdministrator pa) {
         super(iClass, pa);
-        itemList = (List<Item>)itemList.stream()
-                .sorted(Comparator.comparing(Item::getTitle).thenComparing(Item::getReleaseDate))
+        itemList = (List<E>)itemList.stream()
+                .sorted(Comparator.comparing(E::getTitle).thenComparing(E::getReleaseDate))
                 .collect(Collectors.toList());
+        observableItemList = FXCollections.observableArrayList(itemList);
     }
     
 }

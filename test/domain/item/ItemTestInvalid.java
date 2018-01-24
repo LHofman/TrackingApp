@@ -54,5 +54,8 @@ public class ItemTestInvalid {
         public ItemType getType() {
             return ItemType.Movie;
         }
+
+        @Override
+        protected void createNewUserEntity() {}
     }
 }

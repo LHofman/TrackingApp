@@ -30,15 +30,17 @@ import javafx.stage.StageStyle;
 public class ItemDetailsPageController extends EntityDetailsPageController<Item> {
 
     //<editor-fold defaultstate="collapsed" desc="constructors">
-    
-    public ItemDetailsPageController() {super(Item.class);}
-    public ItemDetailsPageController(Item item) {super(item);}
+    public ItemDetailsPageController() {
+        super(Item.class);
+    }
+
+    public ItemDetailsPageController(Item item) {
+        super(item);
+    }
 
     //</editor-fold>
-    
     //<editor-fold defaultstate="collapsed" desc="GridPane">
     //<editor-fold defaultstate="collapsed" desc="setUp">
-    
     /**
      * Fills the grid
      */
@@ -71,21 +73,22 @@ public class ItemDetailsPageController extends EntityDetailsPageController<Item>
             //set objectives (in)visible
             boolean visible = false;
             String lblChildren = "Children", btnChildren = "Children";
-            if (newValue==ItemType.Game){
+            if (newValue == ItemType.Game) {
                 visible = true;
                 lblChildren = "Objectives: ";
                 btnChildren = "See Objectives";
-            }else if (newValue==ItemType.TvShow){
+            } else if (newValue == ItemType.TvShow) {
                 visible = true;
                 lblChildren = "Seasons: ";
                 btnChildren = "See Seasons";
             }
-            if (visible){
+            if (visible) {
                 grid.setVisible(true, "lblObjectives", "btnObjectives");
-                ((Label)grid.getNode("lblChildren")).setText(lblChildren);
-                ((Button)grid.getNode("btnChildren")).setText(btnChildren);
+                ((Label) grid.getNode("lblChildren")).setText(lblChildren);
+                ((Button) grid.getNode("btnChildren")).setText(btnChildren);
             }
-            
+            //set ongoing (in)visible
+            grid.setVisible(newValue == ItemType.TvShow, "lblOngoing", "chbOngoing");
         });
         grid.addRow("empty", "cbType");
         return cbType;
@@ -179,17 +182,18 @@ public class ItemDetailsPageController extends EntityDetailsPageController<Item>
      * Adds all controls below the defaults
      */
     private void addAfterDefaults() {
+        //Children
         grid.addNode("lblChildren", "Label", "Children: ");
         grid.addNode("btnChildren", "Button", "See Children");
         ((Button) grid.getNode("btnChildren")).setOnAction(event -> {
 
-            if (!saveEntity()){
+            if (!saveEntity()) {
                 controller.throwException("Please first fill in the title and date first");
                 return;
             }
 
-            switch(entity.getType()){
-                case Game: 
+            switch (entity.getType()) {
+                case Game:
                     Game game = (Game) controller.getEntityFromId(Game.class, entity.getId());
                     controller.addToScenePath(new GameObjectivesPageController(game));
                     break;
@@ -198,9 +202,13 @@ public class ItemDetailsPageController extends EntityDetailsPageController<Item>
                     controller.addToScenePath(new TvShowSeasonsPageController(tvShow));
                     break;
             }
-            
+
         });
         grid.addRow("lblChildren", "btnChildren");
+        //ongoing
+        grid.addNode("lblOngoing", "Label", "Ongoing: ");
+        grid.addNode("chbOngoing", "CheckBox");
+        grid.addRow("lblOngoing", "chbOngoing");
     }
 
     //</editor-fold>
@@ -214,76 +222,82 @@ public class ItemDetailsPageController extends EntityDetailsPageController<Item>
         grid.setDisable(true, "cbType");
 
         fillDefaultNodes();
-        if (entity.getClass() == Book.class) ((ComboBox)grid.getNode("cmbAuthor")).getSelectionModel().select(((Book)entity).getAuthor());
-
+        if (entity.getClass() == Book.class) {
+            ((ComboBox) grid.getNode("cmbAuthor")).getSelectionModel().select(((Book) entity).getAuthor());
+        }
+        if (entity.getType() == ItemType.TvShow) {
+            ((CheckBox) grid.getNode("chbOngoing")).setSelected(((TvShow) entity).isOngoing());
+        }
     }
 
     /**
      * Fills in the form with all the fields from {@link domain.item.Item}
      */
     private void fillDefaultNodes() {
-        Item item = (Item)entity;
+        Item item = (Item) entity;
         ((ChoiceBox) grid.getNode("cbType")).getSelectionModel().select(item.getType());
         ((TextField) grid.getNode("txtTitle")).setText(item.getTitle());
         MyDate cal = item.getReleaseDate();
         ((DatePicker) grid.getNode("dpReleaseDate")).setValue(cal.getDateAsLocalDate());
         ((CheckBox) grid.getNode("chbInPossession")).setSelected(item.isInCollection());
         ((ChoiceBox) grid.getNode("cbStatus")).getSelectionModel().select(item.getStatus());
+
     }
 
     //</editor-fold>
-    
     /**
      * Saves the Item to the db
+     *
      * @return Whether the saving succeeded
      */
     @Override
     protected boolean saveEntity() {
-        Item i;
         try {
             ItemType type = (ItemType) ((ChoiceBox) grid.getNode("cbType")).getSelectionModel().getSelectedItem();
             String title = ((TextField) grid.getNode("txtTitle")).getText();
             MyDate releaseDate = new MyDate(((DatePicker) grid.getNode("dpReleaseDate")).getValue());
             boolean inCollection = ((CheckBox) grid.getNode("chbInPossession")).isSelected();
             Status status = (Status) ((ChoiceBox) grid.getNode("cbStatus")).getSelectionModel().getSelectedItem();
-
-            switch (type) {
-                case Book:
-                    ComboBox cmbAuthor = (ComboBox) grid.getNode("cmbAuthor");
-                    Person author = (Person) cmbAuthor.getItems().get(cmbAuthor.getSelectionModel().getSelectedIndex());
-
-                    i = getItemToSave(new Book(title, releaseDate, author, inCollection, status));
-                    break;
-                default:
-                    i = getItemToSave(ItemFactory.createItem(type, title, releaseDate, inCollection, status));
-            }
-
-            if (entity == null) {
+            
+            if (entity==null){
+                Item i;
+                switch (type) {
+                    case Book:
+                        ComboBox cmbAuthor = (ComboBox) grid.getNode("cmbAuthor");
+                        Person author = (Person) cmbAuthor.getItems().get(cmbAuthor.getSelectionModel().getSelectedIndex());
+                        i = new Book(title, releaseDate, author, inCollection, status);
+                        break;
+                    case TvShow:
+                        boolean ongoing = ((CheckBox) grid.getNode("chbOngoing")).isSelected();
+                        i = new TvShow(title, releaseDate, ongoing, inCollection, status);
+                        break;
+                    default:
+                        i = ItemFactory.createItem(type, title, releaseDate, inCollection, status);
+                }
                 controller.addEntity(i);
-            } else {
-                controller.editEntity(i);
+            }else{
+                entity.setTitle(title);
+                entity.setReleaseDate(releaseDate);
+                entity.setInCollection(inCollection);
+                entity.setStatus(status);
+                switch (type){
+                    case Book:
+                        ComboBox cmbAuthor = (ComboBox) grid.getNode("cmbAuthor");
+                        Person author = (Person) cmbAuthor.getItems().get(cmbAuthor.getSelectionModel().getSelectedIndex());
+                        ((Book)entity).setAuthor(author);
+                        break;
+                    case TvShow:
+                        boolean ongoing = ((CheckBox) grid.getNode("chbOngoing")).isSelected();
+                        ((TvShow)entity).setOngoing(ongoing);
+                        break;
+                }
+                controller.editEntity(entity);
             }
 
             return true;
         } catch (Exception e) {
             controller.throwException(e);
             return false;
-        }
-    }
-
-    /**
-     * Returns the actual item
-     *
-     * @param i
-     * @return
-     */
-    private Item getItemToSave(Item i) {
-        if (entity == null) {
-            return i;
-        } else {
-            Item item = (Item)entity;
-            item.editItem(i);
-            return item;
         }
     }
 
